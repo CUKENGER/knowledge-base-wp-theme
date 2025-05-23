@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+	--meta-color: #92A6C2;
+	--title-color: #15152A;
+	--link-color: #2288EE;
+	--black: #26282D;
+	--gray-dark: #4D566A;
+	--gray-light: #ABB0BA;
+	--gray-stroke: #EAEAED;
+	--gray-back: #F4F4F6;
+	--white: #ffffff;
+	--accent-blue: #0080FF;
+	--accent-blue-dark: #0777E7;
+	--blue-back: #EAF2FA;
+}
+
+html {
+	scroll-behavior: smooth;
+	height: 100%;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	position: relative;
+	background: var(--white);
+}
+
+body::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 878px;
+	background-image: url('../assets/background.webp');
+	background-size: cover;
+	background-position: top;
+	background-repeat: no-repeat;
+	z-index: -1;
+}
+
+main {
+	flex: 1 0 auto;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+	z-index: 10;
+}
+
+.overlay.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+@media (max-width: 500px) {
+	.container {
+		padding: 0 10px;
+	}
+}

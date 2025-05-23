@@ -1,0 +1,81 @@
+/* =============================================
+   WordPress Reset Styles
+   ============================================= */
+
+/* Box sizing reset */
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* Remove default margins */
+body, h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, dl, dd, ol, ul,
+figure, hr, fieldset, legend {
+	margin: 0;
+	padding: 0;
+}
+
+/* Remove list styles */
+ul, ol {
+	list-style: none;
+}
+
+/* Reset links */
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Reset form elements */
+button, input, select, textarea {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	font: inherit;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+/* Remove focus outlines (add your own focus styles later) */
+:focus {
+	outline: 0;
+}
+
+/* Responsive media */
+img, embed, iframe, object, video {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+/* Table reset */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* WordPress specific */
+.alignnone {
+	margin: 0;
+}
+
+.aligncenter {
+	display: block;
+	margin: 0 auto;
+}
+
+.alignleft {
+	float: left;
+	margin-right: 1em;
+}
+
+.alignright {
+	float: right;
+	margin-left: 1em;
+}
+
+.wp-caption {
+	max-width: 100%;
+}
