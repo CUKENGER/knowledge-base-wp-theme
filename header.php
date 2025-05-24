@@ -44,7 +44,9 @@
     <div class="container">
       <div class="header-container">
         <div class='logo-container'>
-          <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/logo.svg'); ?>" alt="Логотип сайта" />
+          <a href="<?php echo esc_url(home_url('/')); ?>" class="logo-link">
+            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/logo.svg'); ?>" alt="Логотип сайта" />
+          </a>
         </div>
         <div class='header-btn__container'>
           <button class='header-btn header-btn--support'>
@@ -54,8 +56,25 @@
             Сайт сервиса
           </button>
         </div>
-        <div class='header-menu__container'>
-          <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/menu-button.svg'); ?>" alt="Меню">
+        <div class="header-menu__container">
+          <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/menu-button.svg'); ?>" alt="Меню"
+            class="menu-icon">
+          <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          <div class="header-menu__dropdown">
+            <a href="#" class="header-menu__link">Поддержка</a>
+            <a href="#" class="header-menu__link">Сайт сервиса</a>
+            <div class='header-menu__divide'></div>
+            <a href="#" class="header-menu__link">Официальный канал</a>
+            <a href="#" class="header-menu__link">Канал про продвижение</a>
+            <a href="#" class="header-menu__link">Чат поддержки</a>
+          </div>
+          <div class="header-menu__overlay">
+
+          </div>
         </div>
       </div>
     </div>

@@ -13,6 +13,9 @@
 
 .header-menu__container {
 	display: none;
+	position: relative;
+	cursor: pointer;
+	z-index: 20;
 }
 
 .header-btn {
@@ -46,6 +49,102 @@
 	color: var(--accent-blue);
 	font-weight: 700;
 	border: 1px solid var(--gray-stroke)
+}
+
+.close-icon {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	/* transition: opacity 0.3s ease-in-out; */
+	color: white;
+	z-index: 50;
+}
+
+.header-menu__container.active .menu-icon {
+	opacity: 0;
+}
+
+.header-menu__container.active .close-icon {
+	display: block;
+	opacity: 1;
+}
+
+.header-menu__container .close-icon {
+	opacity: 0;
+}
+
+.header-menu__dropdown {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: var(--gray-dark);
+	border: 1px solid #5F6779;
+	border-radius: 20px;
+	border-top-right-radius: 10px;
+	padding: 40px;
+	min-width: 160px;
+	z-index: 20;
+	opacity: 0;
+	cursor: default;
+	visibility: hidden;
+	pointer-events: none;
+	transform: scale(0.2);
+	transform-origin: top right;
+	transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.header-menu__container.active .header-menu__dropdown {
+	display: flex;
+	flex-direction: column;
+	opacity: 1;
+	transform: scale(1);
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.header-menu__divide {
+	height: 1px;
+	background-color: #5F6779;
+	width: 100%;
+	margin: 8px 0;
+}
+
+.header-menu__link {
+	display: block;
+	text-align: center;
+	padding: 12px 16px;
+	color: var(--white);
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 110%;
+	user-select: none;
+	white-space: nowrap;
+}
+
+.header-menu__overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 0;
+	background: linear-gradient(to bottom,
+			rgba(244, 244, 246, 0) 0%,
+			rgba(244, 244, 246, 1) 20%,
+			rgba(244, 244, 246, 1) 50%,
+			rgba(244, 244, 246, 0) 100%);
+	z-index: 19;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+	pointer-events: none;
+}
+
+.header-menu__container.active .header-menu__overlay {
+	height: calc(100% - 100px);
+	opacity: 0.9;
+	pointer-events: auto;
 }
 
 @media (max-width: 500px) {
