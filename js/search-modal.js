@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const overlay = document.querySelector('.overlay')
 	const body = document.body
 	let scrollPosition = 0
-	let isFocusing = false // Флаг для предотвращения blur
+	let isFocusing = false // Глобальный флаг для предотвращения blur
+	let isProcessingClick = false // Флаг для блокировки новых кликов
+	let lastClickTime = 0 // Время последнего клика
 
 	console.log('Found inputs:', inputs.length)
 
@@ -63,27 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
 			})
 	}
 
-	// Функция для надёжного возврата фокуса с debounce
+	// Функция для надёжного возврата фокуса
 	function ensureFocus(input) {
-		if (document.activeElement === input) {
-			console.log('Focus already set on', input)
+		if (document.activeElement === input || isFocusing) {
+			console.log('Focus already set or in progress on', input)
 			return
 		}
-		let attempts = 0
-		const maxAttempts = 3
 		let focusTimeout
 		const tryFocus = () => {
 			clearTimeout(focusTimeout)
 			focusTimeout = setTimeout(() => {
 				input.focus()
-				if (document.activeElement !== input && attempts < maxAttempts) {
-					attempts++
-					console.warn(`Focus attempt ${attempts} failed, retrying...`)
-					setTimeout(tryFocus, 50)
-				} else if (document.activeElement === input) {
+				if (document.activeElement === input) {
 					console.log('Focus set successfully on', input)
 				} else {
-					console.error('Failed to set focus after', maxAttempts, 'attempts')
+					console.error('Failed to set focus')
 				}
 			}, 150)
 		}
@@ -129,13 +125,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (wrapper) {
 			let clickTimeout
 			wrapper.addEventListener('click', e => {
+				const now = Date.now()
 				if (
 					!e.target.closest('.hero-input-clear, .sidebar-input-clear') &&
 					document.activeElement !== input &&
-					e.target !== input
+					e.target !== input &&
+					!isProcessingClick &&
+					now - lastClickTime > 300 // Минимальный интервал между кликами
 				) {
-					e.preventDefault() // Предотвращаем возможный blur
+					e.preventDefault()
 					clearTimeout(clickTimeout)
+					isProcessingClick = true
+					lastClickTime = now
 					clickTimeout = setTimeout(() => {
 						isFocusing = true
 						console.log('Setting focus via wrapper click:', wrapper.className)
@@ -148,8 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
 						)
 						setTimeout(() => {
 							isFocusing = false
-						}, 300) // Продлеваем флаг
-					}, 200) // Увеличено
+							isProcessingClick = false
+						}, 400) // Продлеваем флаг
+					}, 300) // Увеличено
 				}
 			})
 		}
@@ -173,8 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		input.addEventListener('blur', e => {
 			console.log('Input blur:', input.className)
 			setTimeout(() => {
-				if (isFocusing) {
-					console.log('Blur ignored due to ongoing focus')
+				const now = Date.now()
+				if (isFocusing || now - lastClickTime < 400) {
+					console.log('Blur ignored due to ongoing focus or recent click')
 					return
 				}
 				const isResultsClicked = resultsContainer.contains(
@@ -192,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					console.log('Overflow on blur:', body.style.overflow)
 					console.log('Border on blur:', getComputedStyle(wrapper).borderColor)
 				}
-			}, 300) // Увеличено
+			}, 400) // Увеличено
 		})
 
 		// Ввод текста: поиск и показ крестика
@@ -217,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				ensureFocus(input)
 				setTimeout(() => {
 					isFocusing = false
-				}, 300)
+				}, 400)
 			}
 			clearButton.addEventListener('click', clearHandler)
 			clearButton.addEventListener('mousedown', e => {
