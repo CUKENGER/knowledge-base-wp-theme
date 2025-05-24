@@ -1,0 +1,28 @@
+.common-breadcrumbs {
+	color: var(--gray-light);
+	font-size: 14px;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 24px;
+	overflow-x: auto;
+}
+
+.common-breadcrumbs span {
+	white-space: nowrap;
+}
+
+.common-breadcrumbs-link {
+	text-decoration: none;
+	transition: color 0.2s ease-in-out;
+	white-space: nowrap;
+}
+
+.common-breadcrumbs-link:hover {
+	color: var(--gray-dark);
+}
+
+.common-breadcrumbs-divider {
+	color: var(--gray-light);
+}

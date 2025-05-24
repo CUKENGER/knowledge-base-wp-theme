@@ -80,19 +80,13 @@ add_filter('jpeg_quality', function () {
 	return 90;
 });
 
-// Иконки категорий
-function tgh_get_category_icons()
+function tgx_disable_category_pagination($query)
 {
-	return [
-		'prochee' => get_template_directory_uri() . '/assets/other.svg',
-		'news' => get_template_directory_uri() . '/assets/news.svg',
-		'bots' => get_template_directory_uri() . '/assets/bots.svg',
-		'content' => get_template_directory_uri() . '/assets/content.svg',
-		'beginners' => get_template_directory_uri() . '/assets/newbie.svg',
-		'groups' => get_template_directory_uri() . '/assets/groups.svg',
-		'ad' => get_template_directory_uri() . '/assets/ads.svg',
-	];
+	if ($query->is_category() && $query->is_main_query()) {
+		$query->set('posts_per_page', -1);
+	}
 }
+add_action('pre_get_posts', 'tgx_disable_category_pagination');
 
 function banner_shortcode($atts)
 {

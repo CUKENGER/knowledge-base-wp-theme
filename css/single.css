@@ -1,0 +1,35 @@
+.single-container {
+	margin-top: 40px;
+	margin-bottom: 120px;
+}
+
+.single-container__wrapper {
+	display: flex;
+	gap: 40px;
+}
+
+.single__promo-card--tablet {
+	display: none;
+}
+
+@media (max-width: 850px) {
+
+	.single__promo-card--tablet {
+		display: block;
+	}
+
+	.single-container__wrapper {
+		margin-bottom: 64px;
+	}
+}
+
+@media (max-width: 500px) {
+
+	.single-container__wrapper {
+		margin-bottom: 48px;
+	}
+
+	.single-container {
+		margin-bottom: 80px;
+	}
+}

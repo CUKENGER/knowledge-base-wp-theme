@@ -3,20 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	const overlay = document.querySelector('.overlay')
 	const body = document.body
 	let scrollPosition = 0
-	let isFocusing = false // Глобальный флаг для предотвращения blur
-	let isProcessingClick = false // Флаг для блокировки новых кликов
-	let lastClickTime = 0 // Время последнего клика
+	let isFocusing = false
+	let isProcessingClick = false
+	let lastClickTime = 0
 
 	console.log('Found inputs:', inputs.length)
 
-	// Функция для управления видимостью крестика
 	function toggleClearButton(input, clearButton) {
 		if (clearButton) {
 			clearButton.style.display = input.value.trim() ? 'flex' : 'none'
 		}
 	}
 
-	// Функция для анимации появления элементов
 	function animateResults(items) {
 		items.forEach((item, index) => {
 			setTimeout(() => {
@@ -25,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// Функция поиска
 	function performSearch(query, resultsContainer) {
 		if (!query) {
 			resultsContainer.classList.remove('active')
@@ -47,7 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
 						const link = document.createElement('a')
 						link.href = item.link
 						link.className = 'search-result-item'
-						link.textContent = item.title
+						link.innerHTML = `
+                            <span>${item.title}</span>
+                            <svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
+                                <use href="#chevron-icon"></use>
+                            </svg>
+                        `
 						resultsContainer.appendChild(link)
 					})
 					resultsContainer.classList.add('active')
@@ -65,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			})
 	}
 
-	// Функция для надёжного возврата фокуса
 	function ensureFocus(input) {
 		if (document.activeElement === input || isFocusing) {
 			console.log('Focus already set or in progress on', input)
@@ -86,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		tryFocus()
 	}
 
-	// Обработка каждого инпута
 	inputs.forEach(input => {
 		const wrapper = input.closest(
 			'.hero-input__wrapper, .sidebar-input__wrapper'
@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			return
 		}
 
-		// Установка/сброс z-index
 		const setZIndex = isFocused => {
 			if (wrapper.classList.contains('hero-input__wrapper')) {
 				wrapper.style.zIndex = isFocused ? '30' : '19'
@@ -121,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		// Сохраняем фокус при клике на обёртку
 		if (wrapper) {
 			let clickTimeout
 			wrapper.addEventListener('click', e => {
@@ -131,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					document.activeElement !== input &&
 					e.target !== input &&
 					!isProcessingClick &&
-					now - lastClickTime > 300 // Минимальный интервал между кликами
+					now - lastClickTime > 300
 				) {
 					e.preventDefault()
 					clearTimeout(clickTimeout)
@@ -150,13 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
 						setTimeout(() => {
 							isFocusing = false
 							isProcessingClick = false
-						}, 400) // Продлеваем флаг
-					}, 300) // Увеличено
+						}, 400)
+					}, 300)
 				}
 			})
 		}
 
-		// Фокус: показываем overlay, блокируем скролл
 		input.addEventListener('focus', () => {
 			console.log('Input focused:', input.className)
 			if (body.style.overflow !== 'hidden') {
@@ -171,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.log('Border on focus:', getComputedStyle(wrapper).borderColor)
 		})
 
-		// Потеря фокуса: скрываем overlay и результаты
 		input.addEventListener('blur', e => {
 			console.log('Input blur:', input.className)
 			setTimeout(() => {
@@ -195,17 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
 					console.log('Overflow on blur:', body.style.overflow)
 					console.log('Border on blur:', getComputedStyle(wrapper).borderColor)
 				}
-			}, 400) // Увеличено
+			}, 400)
 		})
 
-		// Ввод текста: поиск и показ крестика
 		input.addEventListener('input', () => {
 			const query = input.value.trim()
 			toggleClearButton(input, clearButton)
 			performSearch(query, resultsContainer)
 		})
 
-		// Кнопка очистки
 		if (clearButton) {
 			const clearHandler = e => {
 				e.preventDefault()
@@ -230,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	})
 
-	// Закрытие overlay по клику вне области
 	if (overlay) {
 		overlay.addEventListener('click', e => {
 			if (e.target === overlay) {
@@ -269,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// Закрытие overlay по Esc
 	document.addEventListener('keydown', e => {
 		if (e.key === 'Escape' && overlay.classList.contains('active')) {
 			overlay.classList.remove('active')

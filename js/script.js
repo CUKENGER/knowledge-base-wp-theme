@@ -48,3 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	})
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+	const input = document.querySelector('.page-header__input')
+	const inputContainer = document.querySelector('.page-header__input-container')
+
+	if (!input || !inputContainer) {
+		console.error('Required elements not found')
+		return
+	}
+
+	input.addEventListener('focus', () => {
+		inputContainer.classList.add('expanded')
+	})
+
+	input.addEventListener('blur', () => {
+		inputContainer.classList.remove('expanded')
+	})
+})

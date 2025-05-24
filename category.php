@@ -1,89 +1,49 @@
-<?php get_header(); ?>
+<?php
+/**
+ * The template for displaying category archive pages.
+ */
+get_header();
+?>
 <main>
 	<div class="overlay" aria-hidden="true"></div>
-	<div class='container'>
-		<div class='category-page__container'>
-			<div class='category-page__content'>
+	<?php get_template_part('template-parts/page-header'); ?>
+	<div class="container">
+		<div class="category-page__container">
+			<div class="category-page__content">
 				<?php get_template_part('template-parts/breadcrumbs'); ?>
-				<section class='category-page__post-section'>
-					<p class="category-page__title">Подключение (название категории)</p>
-					<p class='category-page__description'>Возможно, стоит добавить какое-то короткое описание к каждому разделу.
-					</p>
-					<div class='category-page__post-list'>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
-						<div class='category-page__post-item'>
-							📢 Подключение канала и группы
-							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-								<use href="#chevron-icon"></use>
-							</svg>
-						</div>
+				<section class="category-page__post-section">
+					<h1 class="category-page__title"><?php single_cat_title(); ?></h1>
+					<?php
+					$category_description = category_description();
+					if (!empty($category_description)):
+						?>
+						<p class="category-page__description"><?php echo $category_description; ?></p>
+					<?php endif; ?>
+					<div class="category-page__post-list">
+						<?php
+						if (have_posts()):
+							while (have_posts()):
+								the_post();
+								?>
+								<div class="category-page__post-item">
+									<a href="<?php the_permalink(); ?>" class="category-page__post-link"><?php the_title(); ?></a>
+									<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
+										<use href="#chevron-icon"></use>
+									</svg>
+								</div>
+								<?php
+							endwhile;
+						else:
+							?>
+							<div class="category-page__post-item">Записей в этой категории не найдено.</div>
+						<?php endif; ?>
 					</div>
 				</section>
-
-				<div>
-
-				</div>
-
 			</div>
-			<section class='category-page__sidebar'>
-
-				<div class='sidebar-input__container'>
-					<div class='sidebar-input__wrapper'>
-						<img src="<?php echo esc_url(get_template_directory_uri() . '/assets/search-icon.svg'); ?>" alt="Поиск">
-						<input type="text" class='sidebar-input' placeholder='Какой у вас вопрос?'>
-						<svg class="sidebar-input-clear" width="24" height="24" viewBox="0 0 24 24" fill="none"
-							xmlns="http://www.w3.org/2000/svg">
-							<circle cx="12" cy="12" r="10" fill="currentColor" />
-							<path d="M9 15L15 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" />
-							<path d="M15 15L9 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" />
-						</svg>
-					</div>
-					<div class="sidebar-input__search-results"></div>
-				</div>
-
-				<div class='category-page__sidebar-contents'>
-					<button class='category-widget__title'>
-						<p class='category-widget__content--title'>
-							О Сервисе
-							<span class='category-widget__count--title'>5</span>
-						</p>
-						<svg width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M2 3L6 8L2 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-								stroke-linejoin="round" />
-						</svg>
-					</button>
-				</div>
+			<div class="category-page__promo-card--tablet">
 				<?php get_template_part('template-parts/promo-card'); ?>
-			</section>
+			</div>
+			<?php get_template_part('template-parts/sidebar'); ?>
 		</div>
 	</div>
 	<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
