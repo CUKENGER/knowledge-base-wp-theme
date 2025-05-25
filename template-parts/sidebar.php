@@ -1,11 +1,10 @@
 <?php
 /**
  * Template Part: Sidebar
- * 
  * Displays Dropdown button and search for category and single post pages.
  */
 if (is_single() || is_category()):
-	$current_post_id = is_single() ? get_the_ID() : 0;
+	$current_post_id = get_queried_object_id();
 	$current_category_id = is_category() ? get_queried_object_id() : 0;
 	if (is_single()) {
 		$post_categories = wp_get_post_categories($current_post_id, ['fields' => 'ids']);
@@ -22,16 +21,20 @@ if (is_single() || is_category()):
 				<svg class="hero-input-clear" width="24" height="24" viewBox="0 0 24 24" fill="none"
 					xmlns="http://www.w3.org/2000/svg">
 					<circle cx="12" cy="12" r="10" fill="currentColor" />
-					<path d="M9 15L15 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" />
-					<path d="M15 15L9 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" />
+					<path d="M9 15L15 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M15 15L9 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</div>
 			<div class="sidebar-input__search-results"></div>
 		</div>
-
 		<div class="common-sidebar__contents">
 			<?php
-			$categories = get_categories(['hide_empty' => true]);
+			$categories = get_transient('tgx_categories');
+			if (false === $categories) {
+				$categories = get_categories(['hide_empty' => true]);
+				set_transient('tgx_categories', $categories, HOUR_IN_SECONDS);
+			}
+
 			foreach ($categories as $category):
 				$post_count = $category->count;
 				$is_active = ($category->term_id == $active_category_id) ? ' is-active' : '';
@@ -53,22 +56,20 @@ if (is_single() || is_category()):
 					<?php
 					$posts = get_posts([
 						'category' => $category->term_id,
-						'numberposts' => -1,
+						'numberposts' => 10,
 					]);
 					foreach ($posts as $post):
-						setup_postdata($post);
 						$is_post_active = ($post->ID == $current_post_id) ? ' active' : '';
+						error_log('Sidebar Post: ID: ' . $post->ID . ', Title: ' . get_the_title($post->ID) . ', URL: ' . get_permalink($post->ID));
 						?>
-						<a href="<?php the_permalink(); ?>" class="card-btn <?php echo esc_attr($is_post_active); ?>">
-							<?php the_title(); ?>
+						<a href="<?php echo esc_url(get_permalink($post->ID)); ?>"
+							class="card-btn <?php echo esc_attr($is_post_active); ?>">
+							<?php echo esc_html(get_the_title($post->ID)); ?>
 							<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
 								<use href="#chevron-icon"></use>
 							</svg>
 						</a>
-						<?php
-					endforeach;
-					wp_reset_postdata();
-					?>
+					<?php endforeach; ?>
 				</div>
 			<?php endforeach; ?>
 		</div>

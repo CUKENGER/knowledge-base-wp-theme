@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying category archive pages.
+ * Template: Category Page
  */
 get_header();
 ?>
@@ -24,16 +24,19 @@ get_header();
 						if (have_posts()):
 							while (have_posts()):
 								the_post();
+								// Дебаг
+								error_log('Category Post: ID ' . get_the_ID() . ', Title: ' . get_the_title() . ', Slug: ' . get_post_field('post_name') . ', URL: ' . get_permalink());
 								?>
-								<div class="category-page__post-item">
-									<a href="<?php the_permalink(); ?>" class="category-page__post-link"><?php the_title(); ?></a>
+								<a href="<?php the_permalink(); ?>" class="category-page__post-item">
+									<div class="category-page__post-link"><?php the_title(); ?></div>
 									<svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
 										<use href="#chevron-icon"></use>
 									</svg>
-								</div>
+								</a>
 								<?php
 							endwhile;
 						else:
+							error_log('No posts found in category: ' . single_cat_title('', false));
 							?>
 							<div class="category-page__post-item">Записей в этой категории не найдено.</div>
 						<?php endif; ?>

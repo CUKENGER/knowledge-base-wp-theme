@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const inputs = document.querySelectorAll('.hero-input, .sidebar-input')
+	const inputs = document.querySelectorAll(
+		'.hero-input, .sidebar-input, .page-header__input'
+	)
 	const overlay = document.querySelector('.overlay')
 	const body = document.body
 	let scrollPosition = 0
@@ -7,20 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	let isProcessingClick = false
 	let lastClickTime = 0
 
-	console.log('Found inputs:', inputs.length)
-
 	function toggleClearButton(input, clearButton) {
 		if (clearButton) {
 			clearButton.style.display = input.value.trim() ? 'flex' : 'none'
 		}
-	}
-
-	function animateResults(items) {
-		items.forEach((item, index) => {
-			setTimeout(() => {
-				item.classList.add('show')
-			}, index * 100)
-		})
 	}
 
 	function performSearch(query, resultsContainer) {
@@ -43,66 +35,74 @@ document.addEventListener('DOMContentLoaded', () => {
 					data.data.forEach(item => {
 						const link = document.createElement('a')
 						link.href = item.link
-						link.className = 'search-result-item'
+						link.className = 'search-result-item show'
 						link.innerHTML = `
                             <span>${item.title}</span>
                             <svg class="card-btn__icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
                                 <use href="#chevron-icon"></use>
                             </svg>
                         `
+						link.addEventListener('click', e => {
+							// e.preventDefault()
+							e.stopPropagation()
+							input.blur()
+							resultsContainer.classList.remove('active')
+							resultsContainer.innerHTML = ''
+							overlay.classList.remove('active')
+							body.classList.remove('overlay-active')
+							body.style.overflow = ''
+							window.scrollTo(0, scrollPosition)
+							setZIndex(false)
+							window.location.href = item.link
+						})
 						resultsContainer.appendChild(link)
 					})
 					resultsContainer.classList.add('active')
-					const items = resultsContainer.querySelectorAll('.search-result-item')
-					animateResults(items)
 				} else {
 					resultsContainer.innerHTML = '<p>Ничего не найдено</p>'
 					resultsContainer.classList.add('active')
 				}
 			})
 			.catch(error => {
-				console.error('Search error:', error)
+				console.error('Ошибка поиска:', error)
 				resultsContainer.innerHTML = '<p>Ошибка поиска</p>'
 				resultsContainer.classList.add('active')
 			})
 	}
 
-	function ensureFocus(input) {
-		if (document.activeElement === input || isFocusing) {
-			console.log('Focus already set or in progress on', input)
-			return
+	function setZIndex(isFocused, wrapper, container, pageHeader) {
+		if (
+			wrapper.classList.contains('hero-input__wrapper') ||
+			wrapper.classList.contains('page-header__wrapper')
+		) {
+			wrapper.style.zIndex = isFocused ? '30' : '19'
+			container.style.zIndex = isFocused ? '30' : '19'
+			if (pageHeader) {
+				pageHeader.style.zIndex = isFocused ? '30' : '10'
+			}
+			if (container.classList.contains('page-header__input-container')) {
+				container.classList.toggle('expanded', isFocused)
+			}
 		}
-		let focusTimeout
-		const tryFocus = () => {
-			clearTimeout(focusTimeout)
-			focusTimeout = setTimeout(() => {
-				input.focus()
-				if (document.activeElement === input) {
-					console.log('Focus set successfully on', input)
-				} else {
-					console.error('Failed to set focus')
-				}
-			}, 150)
-		}
-		tryFocus()
 	}
 
 	inputs.forEach(input => {
 		const wrapper = input.closest(
-			'.hero-input__wrapper, .sidebar-input__wrapper'
+			'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
 		)
-		const clearButton = wrapper
-			? wrapper.querySelector('.hero-input-clear, .sidebar-input-clear')
-			: null
 		const container = input.closest(
-			'.hero-input__container, .sidebar-input__container'
+			'.hero-input__container, .sidebar-input__container, .page-header__input-container'
+		)
+		const clearButton = wrapper?.querySelector(
+			'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
 		)
 		const resultsContainer = container?.querySelector(
-			'.search-results, .sidebar-input__search-results'
+			'.search-results, .sidebar-input__search-results, .page-header__search-results'
 		)
+		const pageHeader = container?.closest('.page-header--tablet')
 
 		if (!input || !resultsContainer || !container) {
-			console.error('Missing elements for input:', {
+			console.error('Отсутствуют элементы для инпута:', {
 				input,
 				resultsContainer,
 				container,
@@ -110,52 +110,31 @@ document.addEventListener('DOMContentLoaded', () => {
 			return
 		}
 
-		const setZIndex = isFocused => {
-			if (wrapper.classList.contains('hero-input__wrapper')) {
-				wrapper.style.zIndex = isFocused ? '30' : '19'
-				container.style.zIndex = isFocused ? '30' : '19'
-				console.log(
-					`Set z-index for hero-input__wrapper: ${wrapper.style.zIndex}`
-				)
-			}
-		}
-
-		if (wrapper) {
-			let clickTimeout
-			wrapper.addEventListener('click', e => {
+		// Обработчик клика только для page-header__input-container
+		if (container.classList.contains('page-header__input-container')) {
+			container.addEventListener('click', e => {
 				const now = Date.now()
 				if (
-					!e.target.closest('.hero-input-clear, .sidebar-input-clear') &&
+					!e.target.closest('.search-result-item') &&
+					!e.target.closest('.page-header__input-clear') &&
 					document.activeElement !== input &&
 					e.target !== input &&
 					!isProcessingClick &&
 					now - lastClickTime > 300
 				) {
 					e.preventDefault()
-					clearTimeout(clickTimeout)
 					isProcessingClick = true
 					lastClickTime = now
-					clickTimeout = setTimeout(() => {
-						isFocusing = true
-						console.log('Setting focus via wrapper click:', wrapper.className)
-						setZIndex(true)
-						input.focus()
-						console.log('Overflow after click:', body.style.overflow)
-						console.log(
-							'Border after click:',
-							getComputedStyle(wrapper).borderColor
-						)
-						setTimeout(() => {
-							isFocusing = false
-							isProcessingClick = false
-						}, 400)
-					}, 300)
+					isFocusing = true
+					setZIndex(true, wrapper, container, pageHeader)
+					input.focus()
+					isFocusing = false
+					isProcessingClick = false
 				}
 			})
 		}
 
 		input.addEventListener('focus', () => {
-			console.log('Input focused:', input.className)
 			if (body.style.overflow !== 'hidden') {
 				scrollPosition = window.scrollY
 				overlay.classList.add('active')
@@ -163,35 +142,25 @@ document.addEventListener('DOMContentLoaded', () => {
 				body.style.overflow = 'hidden'
 			}
 			toggleClearButton(input, clearButton)
-			setZIndex(true)
-			console.log('Overflow on focus:', body.style.overflow)
-			console.log('Border on focus:', getComputedStyle(wrapper).borderColor)
+			setZIndex(true, wrapper, container, pageHeader)
 		})
 
 		input.addEventListener('blur', e => {
-			console.log('Input blur:', input.className)
-			setTimeout(() => {
-				const now = Date.now()
-				if (isFocusing || now - lastClickTime < 400) {
-					console.log('Blur ignored due to ongoing focus or recent click')
-					return
-				}
-				const isResultsClicked = resultsContainer.contains(
-					document.activeElement
-				)
-				const isInputFocused = input === document.activeElement
-				const isWrapperClicked = wrapper.contains(e.relatedTarget)
-				if (!isResultsClicked && !isInputFocused && !isWrapperClicked) {
-					overlay.classList.remove('active')
-					body.classList.remove('overlay-active')
-					resultsContainer.classList.remove('active')
-					body.style.overflow = ''
-					window.scrollTo(0, scrollPosition)
-					setZIndex(false)
-					console.log('Overflow on blur:', body.style.overflow)
-					console.log('Border on blur:', getComputedStyle(wrapper).borderColor)
-				}
-			}, 400)
+			const now = Date.now()
+			if (isFocusing || now - lastClickTime < 300) {
+				return
+			}
+			const isResultsClicked = resultsContainer.contains(e.relatedTarget)
+			const isInputFocused = input === document.activeElement
+			const isWrapperClicked = wrapper.contains(e.relatedTarget)
+			if (!isResultsClicked && !isInputFocused && !isWrapperClicked) {
+				overlay.classList.remove('active')
+				body.classList.remove('overlay-active')
+				resultsContainer.classList.remove('active')
+				body.style.overflow = ''
+				window.scrollTo(0, scrollPosition)
+				setZIndex(false, wrapper, container, pageHeader)
+			}
 		})
 
 		input.addEventListener('input', () => {
@@ -204,17 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			const clearHandler = e => {
 				e.preventDefault()
 				e.stopPropagation()
-				console.log('Clear button clicked:', clearButton.className)
 				input.value = ''
 				resultsContainer.classList.remove('active')
 				resultsContainer.innerHTML = ''
 				toggleClearButton(input, clearButton)
-				isFocusing = true
 				input.focus()
-				ensureFocus(input)
-				setTimeout(() => {
-					isFocusing = false
-				}, 400)
 			}
 			clearButton.addEventListener('click', clearHandler)
 			clearButton.addEventListener('mousedown', e => {
@@ -231,17 +194,18 @@ document.addEventListener('DOMContentLoaded', () => {
 				body.classList.remove('overlay-active')
 				inputs.forEach(input => {
 					const wrapper = input.closest(
-						'.hero-input__wrapper, .sidebar-input__wrapper'
+						'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
 					)
 					const clearButton = wrapper?.querySelector(
-						'.hero-input-clear, .sidebar-input-clear'
+						'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
 					)
 					const container = input.closest(
-						'.hero-input__container, .sidebar-input__container'
+						'.hero-input__container, .sidebar-input__container, .page-header__input-container'
 					)
 					const resultsContainer = container?.querySelector(
-						'.search-results, .sidebar-input__search-results'
+						'.search-results, .sidebar-input__search-results, .page-header__search-results'
 					)
+					const pageHeader = container?.closest('.page-header--tablet')
 					input.value = ''
 					if (resultsContainer) resultsContainer.classList.remove('active')
 					if (resultsContainer) resultsContainer.innerHTML = ''
@@ -249,10 +213,17 @@ document.addEventListener('DOMContentLoaded', () => {
 					if (
 						wrapper &&
 						container &&
-						wrapper.classList.contains('hero-input__wrapper')
+						(wrapper.classList.contains('hero-input__wrapper') ||
+							wrapper.classList.contains('page-header__wrapper'))
 					) {
 						wrapper.style.zIndex = '19'
 						container.style.zIndex = '19'
+						if (container.classList.contains('page-header__input-container')) {
+							container.classList.remove('expanded')
+						}
+						if (pageHeader) {
+							pageHeader.style.zIndex = '10'
+						}
 					}
 				})
 				body.style.overflow = ''
@@ -268,17 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			body.classList.remove('overlay-active')
 			inputs.forEach(input => {
 				const wrapper = input.closest(
-					'.hero-input__wrapper, .sidebar-input__wrapper'
+					'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
 				)
 				const clearButton = wrapper?.querySelector(
-					'.hero-input-clear, .sidebar-input-clear'
+					'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
 				)
 				const container = input.closest(
-					'.hero-input__container, .sidebar-input__container'
+					'.hero-input__container, .sidebar-input__container, .page-header__input-container'
 				)
 				const resultsContainer = container?.querySelector(
-					'.search-results, .sidebar-input__search-results'
+					'.search-results, .sidebar-input__search-results, .page-header__search-results'
 				)
+				const pageHeader = container?.closest('.page-header--tablet')
 				input.value = ''
 				if (resultsContainer) resultsContainer.classList.remove('active')
 				if (resultsContainer) resultsContainer.innerHTML = ''
@@ -286,10 +258,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (
 					wrapper &&
 					container &&
-					wrapper.classList.contains('hero-input__wrapper')
+					(wrapper.classList.contains('hero-input__wrapper') ||
+						wrapper.classList.contains('page-header__wrapper'))
 				) {
 					wrapper.style.zIndex = '19'
 					container.style.zIndex = '19'
+					if (container.classList.contains('page-header__input-container')) {
+						container.classList.remove('expanded')
+					}
+					if (pageHeader) {
+						pageHeader.style.zIndex = '10'
+					}
 				}
 				input.blur()
 			})
