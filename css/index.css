@@ -346,6 +346,7 @@
 	border-radius: 16px;
 	width: 100%;
 	cursor: pointer;
+	text-align: center;
 	transition: all 0.2s ease-in-out;
 }
 

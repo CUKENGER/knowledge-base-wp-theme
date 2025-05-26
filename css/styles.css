@@ -81,14 +81,6 @@ main {
 	visibility: visible;
 }
 
-
-.hero-input:focus::placeholder,
-.sidebar-input:focus::placeholder,
-.page-header__input:focus::placeholder {
-	opacity: 0;
-}
-
-
 @media (max-width: 500px) {
 	.container {
 		padding: 0 10px;

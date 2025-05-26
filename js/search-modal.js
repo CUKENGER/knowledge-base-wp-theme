@@ -1,7 +1,8 @@
+/**
+ * Search modal functionality for hero input.
+ */
 document.addEventListener('DOMContentLoaded', () => {
-	const inputs = document.querySelectorAll(
-		'.hero-input, .sidebar-input, .page-header__input'
-	)
+	const inputs = document.querySelectorAll('.hero-input')
 	const overlay = document.querySelector('.overlay')
 	const body = document.body
 	let scrollPosition = 0
@@ -42,9 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <use href="#chevron-icon"></use>
                             </svg>
                         `
-						link.addEventListener('click', e => {
-							// e.preventDefault()
-							e.stopPropagation()
+						link.addEventListener('click', () => {
 							input.blur()
 							resultsContainer.classList.remove('active')
 							resultsContainer.innerHTML = ''
@@ -52,8 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 							body.classList.remove('overlay-active')
 							body.style.overflow = ''
 							window.scrollTo(0, scrollPosition)
-							setZIndex(false)
-							window.location.href = item.link
 						})
 						resultsContainer.appendChild(link)
 					})
@@ -70,36 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			})
 	}
 
-	function setZIndex(isFocused, wrapper, container, pageHeader) {
-		if (
-			wrapper.classList.contains('hero-input__wrapper') ||
-			wrapper.classList.contains('page-header__wrapper')
-		) {
+	function setZIndex(isFocused, wrapper, container) {
+		if (wrapper.classList.contains('hero-input__wrapper')) {
 			wrapper.style.zIndex = isFocused ? '30' : '19'
 			container.style.zIndex = isFocused ? '30' : '19'
-			if (pageHeader) {
-				pageHeader.style.zIndex = isFocused ? '30' : '10'
-			}
-			if (container.classList.contains('page-header__input-container')) {
-				container.classList.toggle('expanded', isFocused)
-			}
 		}
 	}
 
 	inputs.forEach(input => {
-		const wrapper = input.closest(
-			'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
-		)
-		const container = input.closest(
-			'.hero-input__container, .sidebar-input__container, .page-header__input-container'
-		)
-		const clearButton = wrapper?.querySelector(
-			'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
-		)
-		const resultsContainer = container?.querySelector(
-			'.search-results, .sidebar-input__search-results, .page-header__search-results'
-		)
-		const pageHeader = container?.closest('.page-header--tablet')
+		const wrapper = input.closest('.hero-input__wrapper')
+		const container = input.closest('.hero-input__container')
+		const clearButton = wrapper?.querySelector('.hero-input-clear')
+		const resultsContainer = container?.querySelector('.search-results')
 
 		if (!input || !resultsContainer || !container) {
 			console.error('Отсутствуют элементы для инпута:', {
@@ -110,30 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			return
 		}
 
-		// Обработчик клика только для page-header__input-container
-		if (container.classList.contains('page-header__input-container')) {
-			container.addEventListener('click', e => {
-				const now = Date.now()
-				if (
-					!e.target.closest('.search-result-item') &&
-					!e.target.closest('.page-header__input-clear') &&
-					document.activeElement !== input &&
-					e.target !== input &&
-					!isProcessingClick &&
-					now - lastClickTime > 300
-				) {
-					e.preventDefault()
-					isProcessingClick = true
-					lastClickTime = now
-					isFocusing = true
-					setZIndex(true, wrapper, container, pageHeader)
-					input.focus()
-					isFocusing = false
-					isProcessingClick = false
-				}
-			})
-		}
-
 		input.addEventListener('focus', () => {
 			if (body.style.overflow !== 'hidden') {
 				scrollPosition = window.scrollY
@@ -142,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				body.style.overflow = 'hidden'
 			}
 			toggleClearButton(input, clearButton)
-			setZIndex(true, wrapper, container, pageHeader)
+			setZIndex(true, wrapper, container)
 		})
 
 		input.addEventListener('blur', e => {
@@ -159,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				resultsContainer.classList.remove('active')
 				body.style.overflow = ''
 				window.scrollTo(0, scrollPosition)
-				setZIndex(false, wrapper, container, pageHeader)
+				setZIndex(false, wrapper, container)
 			}
 		})
 
@@ -193,37 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				overlay.classList.remove('active')
 				body.classList.remove('overlay-active')
 				inputs.forEach(input => {
-					const wrapper = input.closest(
-						'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
-					)
-					const clearButton = wrapper?.querySelector(
-						'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
-					)
-					const container = input.closest(
-						'.hero-input__container, .sidebar-input__container, .page-header__input-container'
-					)
-					const resultsContainer = container?.querySelector(
-						'.search-results, .sidebar-input__search-results, .page-header__search-results'
-					)
-					const pageHeader = container?.closest('.page-header--tablet')
+					const wrapper = input.closest('.hero-input__wrapper')
+					const clearButton = wrapper?.querySelector('.hero-input-clear')
+					const container = input.closest('.hero-input__container')
+					const resultsContainer = container?.querySelector('.search-results')
 					input.value = ''
 					if (resultsContainer) resultsContainer.classList.remove('active')
 					if (resultsContainer) resultsContainer.innerHTML = ''
 					toggleClearButton(input, clearButton)
-					if (
-						wrapper &&
-						container &&
-						(wrapper.classList.contains('hero-input__wrapper') ||
-							wrapper.classList.contains('page-header__wrapper'))
-					) {
+					if (wrapper && container) {
 						wrapper.style.zIndex = '19'
 						container.style.zIndex = '19'
-						if (container.classList.contains('page-header__input-container')) {
-							container.classList.remove('expanded')
-						}
-						if (pageHeader) {
-							pageHeader.style.zIndex = '10'
-						}
 					}
 				})
 				body.style.overflow = ''
@@ -238,37 +173,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			overlay.classList.remove('active')
 			body.classList.remove('overlay-active')
 			inputs.forEach(input => {
-				const wrapper = input.closest(
-					'.hero-input__wrapper, .sidebar-input__wrapper, .page-header__wrapper'
-				)
-				const clearButton = wrapper?.querySelector(
-					'.hero-input-clear, .sidebar-input-clear, .page-header__input-clear'
-				)
-				const container = input.closest(
-					'.hero-input__container, .sidebar-input__container, .page-header__input-container'
-				)
-				const resultsContainer = container?.querySelector(
-					'.search-results, .sidebar-input__search-results, .page-header__search-results'
-				)
-				const pageHeader = container?.closest('.page-header--tablet')
+				const wrapper = input.closest('.hero-input__wrapper')
+				const clearButton = wrapper?.querySelector('.hero-input-clear')
+				const container = input.closest('.hero-input__container')
+				const resultsContainer = container?.querySelector('.search-results')
 				input.value = ''
 				if (resultsContainer) resultsContainer.classList.remove('active')
 				if (resultsContainer) resultsContainer.innerHTML = ''
 				toggleClearButton(input, clearButton)
-				if (
-					wrapper &&
-					container &&
-					(wrapper.classList.contains('hero-input__wrapper') ||
-						wrapper.classList.contains('page-header__wrapper'))
-				) {
+				if (wrapper && container) {
 					wrapper.style.zIndex = '19'
 					container.style.zIndex = '19'
-					if (container.classList.contains('page-header__input-container')) {
-						container.classList.remove('expanded')
-					}
-					if (pageHeader) {
-						pageHeader.style.zIndex = '10'
-					}
 				}
 				input.blur()
 			})

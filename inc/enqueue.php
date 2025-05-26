@@ -40,6 +40,9 @@ function tgx_theme_enqueue_scripts()
 	if ((is_single() || is_category()) && file_exists(get_template_directory() . '/js/sidebar-toggle.js')) {
 		wp_enqueue_script('tgx-sidebar-toggle', get_template_directory_uri() . '/js/sidebar-toggle.js', [], filemtime(get_template_directory() . '/js/sidebar-toggle.js'), true);
 		wp_enqueue_script('tgx-contents-menu-toggle', get_template_directory_uri() . '/js/contents-menu.js', [], filemtime(get_template_directory() . '/js/contents-menu.js'), true);
+		wp_enqueue_script('tgx-page-header-toggle', get_template_directory_uri() . '/js/page-header-toggle.js', [], filemtime(get_template_directory() . '/js/page-header-toggle.js'), true);
+		wp_enqueue_script('tgx-sidebar-search', get_template_directory_uri() . '/js/sidebar-search.js', [], filemtime(get_template_directory() . '/js/sidebar-search.js'), true);
+		wp_enqueue_script('tgx-page-header-search', get_template_directory_uri() . '/js/page-header-search.js', [], filemtime(get_template_directory() . '/js/page-header-search.js'), true);
 	}
 }
 add_action('wp_enqueue_scripts', 'tgx_theme_enqueue_scripts');

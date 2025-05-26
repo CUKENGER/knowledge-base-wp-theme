@@ -1,53 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const categories = document.querySelector('.categories')
-	if (!categories) return
+	const containers = document.querySelectorAll(
+		'.suggestions, .common-breadcrumbs'
+	)
+	if (!containers.length) return
 
-	let isDragging = false
-	let startX
-	let scrollLeft
+	containers.forEach(container => {
+		let isDragging = false
+		let startX
+		let scrollLeft
 
-	// Начало перетаскивания
-	categories.addEventListener('mousedown', e => {
-		// Игнорируем, если клик по ссылке
-		if (e.target.closest('.category-container')) return
+		// Начало перетаскивания
+		container.addEventListener('mousedown', e => {
+			if (e.target.closest('.suggestions-btn, .common-breadcrumbs-link')) return
+			isDragging = true
+			container.classList.add('dragging')
+			startX = e.pageX - container.offsetLeft
+			scrollLeft = container.scrollLeft
+			e.preventDefault()
+		})
 
-		isDragging = true
-		categories.classList.add('dragging')
-		startX = e.pageX - categories.offsetLeft
-		scrollLeft = categories.scrollLeft
-		e.preventDefault() // Отключаем выделение текста
-	})
+		// Перетаскивание
+		container.addEventListener('mousemove', e => {
+			if (!isDragging) return
+			const x = e.pageX - container.offsetLeft
+			const walk = (x - startX) * 2 // Ускоряем скролл
+			container.scrollLeft = scrollLeft - walk
+		})
 
-	// Перетаскивание
-	categories.addEventListener('mousemove', e => {
-		if (!isDragging) return
-		const x = e.pageX - categories.offsetLeft
-		const walk = (x - startX) * 2 // Ускоряем скролл
-		categories.scrollLeft = scrollLeft - walk
-	})
+		// Конец перетаскивания
+		container.addEventListener('mouseup', () => {
+			isDragging = false
+			container.classList.remove('dragging')
+		})
 
-	// Конец перетаскивания
-	categories.addEventListener('mouseup', () => {
-		isDragging = false
-		categories.classList.remove('dragging')
-	})
+		container.addEventListener('mouseleave', () => {
+			isDragging = false
+			container.classList.remove('dragging')
+		})
 
-	categories.addEventListener('mouseleave', () => {
-		isDragging = false
-		categories.classList.remove('dragging')
-	})
-
-	// Отключаем drag-to-scroll на мобильных (ширина < 550px)
-	window.addEventListener('resize', () => {
-		if (window.innerWidth <= 550) {
-			categories.style.cursor = 'auto'
-		} else {
-			categories.style.cursor = 'grab'
+		// Управление курсором в зависимости от ширины экрана
+		function updateCursor() {
+			if (window.innerWidth <= 550) {
+				container.style.cursor = 'auto'
+			} else {
+				container.style.cursor = isDragging ? 'grabbing' : 'grab'
+			}
 		}
-	})
 
-	// Инициализация курсора
-	if (window.innerWidth <= 550) {
-		categories.style.cursor = 'auto'
-	}
+		// Инициализация и обновление при ресайзе
+		updateCursor()
+		window.addEventListener('resize', updateCursor)
+	})
 })

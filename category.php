@@ -21,11 +21,20 @@ get_header();
 					<?php endif; ?>
 					<div class="category-page__post-list">
 						<?php
-						if (have_posts()):
-							while (have_posts()):
-								the_post();
-								// Дебаг
-								error_log('Category Post: ID ' . get_the_ID() . ', Title: ' . get_the_title() . ', Slug: ' . get_post_field('post_name') . ', URL: ' . get_permalink());
+						$cat_id = get_queried_object_id();
+						error_log('Category ID: ' . $cat_id); // Отладка ID категории
+						$args = array(
+							'cat' => $cat_id,
+							'posts_per_page' => 10,
+							'post_type' => 'post',
+							'post_status' => 'publish',
+						);
+						$query = new WP_Query($args);
+						error_log('Query post count: ' . $query->post_count); // Отладка количества постов
+						if ($query->have_posts()):
+							while ($query->have_posts()):
+								$query->the_post();
+								error_log('Post found: ID: ' . get_the_ID() . ', Title: ' . get_the_title()); // Отладка постов
 								?>
 								<a href="<?php the_permalink(); ?>" class="category-page__post-item">
 									<div class="category-page__post-link"><?php the_title(); ?></div>
@@ -35,8 +44,8 @@ get_header();
 								</a>
 								<?php
 							endwhile;
+							wp_reset_postdata();
 						else:
-							error_log('No posts found in category: ' . single_cat_title('', false));
 							?>
 							<div class="category-page__post-item">Записей в этой категории не найдено.</div>
 						<?php endif; ?>

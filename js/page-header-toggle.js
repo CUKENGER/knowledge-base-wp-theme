@@ -1,12 +1,12 @@
 /**
- * Sidebar category toggle functionality.
- * Handles opening/closing of post lists in the sidebar with smooth animation.
+ * Page header category toggle functionality.
+ * Handles opening/closing of post lists in the page header with smooth animation.
  */
 document.addEventListener('DOMContentLoaded', () => {
-	const buttons = document.querySelectorAll('.sidebar__category-title')
+	const buttons = document.querySelectorAll('.page-header__category-title')
 
 	if (!buttons.length) {
-		console.warn('No sidebar category buttons found.')
+		console.warn('No page header category buttons found.')
 		return
 	}
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		button.addEventListener('click', () => {
 			const categoryId = button.dataset.categoryId
 			const postList = document.querySelector(
-				`.sidebar__post-list[data-category-id="${categoryId}"]`
+				`.page-header__post-list[data-category-id="${categoryId}"]`
 			)
 			const isActive = button.classList.contains('is-active')
 
@@ -24,19 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 
 			// Close all lists and remove active states
-			document.querySelectorAll('.sidebar__category-title').forEach(btn => {
+			document.querySelectorAll('.page-header__category-title').forEach(btn => {
 				btn.classList.remove('is-active')
 				btn.setAttribute('aria-expanded', 'false')
 			})
-			document.querySelectorAll('.sidebar__post-list').forEach(list => {
-				list.classList.remove('active')
+			document.querySelectorAll('.page-header__post-list').forEach(list => {
+				list.style.display = 'none'
 			})
 
 			// Open current list if it was not active
 			if (!isActive) {
 				button.classList.add('is-active')
 				button.setAttribute('aria-expanded', 'true')
-				postList.classList.add('active')
+				postList.style.display = 'flex'
 			}
 		})
 	})
