@@ -184,6 +184,16 @@
 	margin-bottom: 80px;
 }
 
+.suggestions{
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.common-breadcrumbs::-webkit-scrollbar {
+	display: none;
+}
+
+
 .suggestions-btn {
 	padding: 12.5px 16px;
 	color: var(--accent-blue);

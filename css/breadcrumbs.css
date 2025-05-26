@@ -26,3 +26,12 @@
 .common-breadcrumbs-divider {
 	color: var(--gray-light);
 }
+
+.common-breadcrumbs {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.common-breadcrumbs::-webkit-scrollbar {
+	display: none;
+}
