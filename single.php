@@ -174,6 +174,9 @@ function remove_emoji($string)
               }
               // echo do_shortcode('[banner_pulse]');
               ?>
+              <div class="post-updated">
+                Обновлено: <?php echo get_the_modified_date('d.m.Y'); ?>
+              </div>
             </div>
             <?php if (get_field('external_source', $current_post_id)): ?>
               <div class="external-links">
