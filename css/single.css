@@ -186,6 +186,7 @@
 	max-width: 100%;
 	overflow: hidden;
 	clear: both;
+	color: var(--gray-dark);
 }
 
 .copy-block__content {
@@ -203,12 +204,14 @@
 }
 
 .copy-button svg {
+	color: #ABB0BA;
 	fill: #ABB0BA;
 	transition: fill 0.2s ease-in-out;
 }
 
 .copy-block:hover svg {
 	fill: #000;
+	color: #000;
 }
 
 .post-updated {
