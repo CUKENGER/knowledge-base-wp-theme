@@ -349,10 +349,13 @@
 }
 
 .page-header__no-posts {
-	font-size: 14px;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 140%;
 	color: var(--gray-dark);
 	padding: 8px 20px;
 	line-height: 140%;
+	text-align: center;
 }
 
 /* Кнопка очистки поиска */
@@ -423,6 +426,7 @@
 		align-items: center;
 		cursor: pointer;
 		width: 40px;
+		height: 42px;
 		right: 0;
 		left: auto;
 		transition: background-color 0.2s ease-in-out;

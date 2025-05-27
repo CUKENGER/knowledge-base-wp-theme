@@ -36,6 +36,7 @@
 	width: 100%;
 	padding: 16px 0;
 	font-size: 16px;
+	font-weight: 500;
 	line-height: 110%;
 	color: var(--gray-dark);
 	background-color: transparent;
@@ -240,10 +241,12 @@
 }
 
 .sidebar__no-posts {
-	font-size: 14px;
+	font-size: 16px;
+	font-weight: 600;
 	color: var(--gray-dark);
 	padding: 8px 20px;
 	line-height: 140%;
+	text-align: center;
 }
 
 @media (max-width: 850px) {

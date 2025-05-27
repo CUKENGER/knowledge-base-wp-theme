@@ -1,19 +1,21 @@
 /**
  * Sidebar search functionality.
- * Handles search input, clear button, and results display in the sidebar.
+ * Handles search input, clear button, results display, and overlay in the sidebar.
  */
 document.addEventListener('DOMContentLoaded', () => {
 	const input = document.querySelector('.sidebar__search-input')
 	const clearButton = document.querySelector('.sidebar__search-clear')
 	const resultsContainer = document.querySelector('.sidebar__search-results')
+	const overlay = document.querySelector('.overlay')
 	const body = document.body
 	let scrollPosition = 0
 
-	if (!input || !clearButton || !resultsContainer) {
-		console.warn('Sidebar search elements not found:', {
+	if (!input || !clearButton || !resultsContainer || !overlay) {
+		console.warn('Sidebar search elements or overlay not found:', {
 			input,
 			clearButton,
 			resultsContainer,
+			overlay,
 		})
 		return
 	}
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (!query) {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
+			overlay.classList.remove('active')
 			return
 		}
 
@@ -59,15 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
 							resultsContainer.innerHTML = ''
 							toggleClearButton()
 							body.style.overflow = ''
+							overlay.classList.remove('active')
 							window.scrollTo(0, scrollPosition)
 						})
 						resultsContainer.appendChild(link)
 					})
 					resultsContainer.classList.add('active')
+					overlay.classList.add('active')
 				} else {
 					resultsContainer.innerHTML =
 						'<p class="sidebar__no-posts">Ничего не найдено</p>'
 					resultsContainer.classList.add('active')
+					overlay.classList.add('active')
 				}
 			})
 			.catch(error => {
@@ -75,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				resultsContainer.innerHTML =
 					'<p class="sidebar__no-posts">Ошибка поиска</p>'
 				resultsContainer.classList.add('active')
+				overlay.classList.add('active')
 			})
 	}
 
@@ -82,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	input.addEventListener('focus', () => {
 		scrollPosition = window.scrollY
 		body.style.overflow = 'hidden'
+		overlay.classList.add('active')
 		toggleClearButton()
 	})
 
@@ -92,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
 			body.style.overflow = ''
+			overlay.classList.remove('active')
 			window.scrollTo(0, scrollPosition)
 		}
 	})
@@ -111,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		resultsContainer.classList.remove('active')
 		resultsContainer.innerHTML = ''
 		toggleClearButton()
+		// overlay.classList.remove('active')
 		input.focus()
 	})
 
@@ -127,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			resultsContainer.innerHTML = ''
 			toggleClearButton()
 			body.style.overflow = ''
+			overlay.classList.remove('active')
 			window.scrollTo(0, scrollPosition)
 			input.blur()
 		}

@@ -12,7 +12,6 @@ if (is_single()) {
 	$active_category_id = $current_category_id;
 }
 ?>
-<div class="overlay" aria-hidden="true"></div>
 <div class='page-header__contents-menu' id="contents-menu">
 	<div class='page-header__contents-list'>
 		<?php

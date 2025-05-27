@@ -156,6 +156,11 @@
 }
 
 
+.sidebar__search-input {
+	font-weight: 500;
+	height: 54px;
+}
+
 @media (max-width: 1200px) {
 	.single__sidebar {
 		display: none;
