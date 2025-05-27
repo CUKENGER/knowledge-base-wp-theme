@@ -49,12 +49,16 @@
           </a>
         </div>
         <div class='header-btn__container'>
-          <button class='header-btn header-btn--support'>
+          <?php
+          $support_link = get_theme_mod('tgx_support_link', '');
+          $site_link = get_theme_mod('tgx_site_link', '');
+          ?>
+          <a href="<?php echo esc_url($support_link); ?>" class="header-btn header-btn--support" <?php echo $support_link ? '' : 'disabled'; ?>>
             Поддержка
-          </button>
-          <button class='header-btn header-btn--site'>
+          </a>
+          <a href="<?php echo esc_url($site_link); ?>" class="header-btn header-btn--site" <?php echo $site_link ? '' : 'disabled'; ?>>
             Сайт сервиса
-          </button>
+          </a>
         </div>
         <div class="header-menu__container">
           <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/menu-button.svg'); ?>" alt="Меню"
@@ -65,16 +69,24 @@
               stroke-linejoin="round" />
           </svg>
           <div class="header-menu__dropdown">
-            <a href="#" class="header-menu__link">Поддержка</a>
-            <a href="#" class="header-menu__link">Сайт сервиса</a>
+            <a href="<?php echo esc_url($support_link); ?>" class="header-menu__link" <?php echo $support_link ? '' : 'disabled'; ?>>Поддержка</a>
+            <a href="<?php echo esc_url($site_link); ?>" class="header-menu__link" <?php echo $site_link ? '' : 'disabled'; ?>>Сайт сервиса</a>
             <div class='header-menu__divide'></div>
-            <a href="#" class="header-menu__link">Официальный канал</a>
-            <a href="#" class="header-menu__link">Канал про продвижение</a>
-            <a href="#" class="header-menu__link">Чат поддержки</a>
+            <?php
+            $telegram_links = [
+                'official_channel' => 'Официальный канал',
+                'promotion_channel' => 'Канал про продвижение',
+                'support_chat' => 'Чат поддержки',
+            ];
+            foreach ($telegram_links as $key => $label):
+                $link = get_option("tgx_footer_link_$key", '#');
+                ?>
+                <a href="<?php echo esc_url($link); ?>" class="header-menu__link" <?php echo $link !== '#' ? '' : 'disabled'; ?>>
+                    <?php echo esc_html($label); ?>
+                </a>
+            <?php endforeach; ?>
           </div>
-          <div class="header-menu__overlay">
-
-          </div>
+          <div class="header-menu__overlay"></div>
         </div>
       </div>
     </div>

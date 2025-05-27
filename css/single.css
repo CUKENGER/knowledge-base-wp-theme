@@ -8,6 +8,10 @@
 	gap: 40px;
 }
 
+.page-header__input-clear {
+	flex-shrink: 0;
+}
+
 .single__promo-card--tablet {
 	display: none;
 }
@@ -16,10 +20,10 @@
 	margin-top: 40px;
 	display: flex;
 	gap: 40px;
-	margin-bottom: 120px;
 	margin-left: auto;
 	margin-right: auto;
-	max-width: 1200px
+	max-width: 1200px;
+	margin-bottom: 120px;
 }
 
 .category-page__content {
@@ -39,6 +43,11 @@
 	overflow-wrap: break-word;
 	word-break: break-word;
 	hyphens: auto;
+}
+
+.single__sidebar-container {
+	max-width: 360px;
+	min-width: 360px;
 }
 
 
@@ -61,6 +70,8 @@
 	margin: 20px 0 10px;
 	font-weight: bold;
 	line-height: 1.3;
+	color: var(--black);
+	font-family: 'Ubuntu';
 }
 
 .post-content h1 {
@@ -150,19 +161,23 @@
 		display: none;
 	}
 
+	.single__sidebar-container {
+		display: none;
+	}
+
 	.sidebar__page-header {
 		display: flex;
+	}
+
+	.single__promo-card--tablet {
+		display: block;
 	}
 }
 
 @media (max-width: 850px) {
 
-	.single__promo-card--tablet {
-		display: block;
-	}
-
-	.single-container__wrapper {
-		margin-bottom: 64px;
+	.category-page__container {
+		margin-bottom: 100px;
 	}
 
 	.category-page__content {
@@ -176,7 +191,7 @@
 		margin-bottom: 48px;
 	}
 
-	.single-container {
+	.category-page__container {
 		margin-bottom: 80px;
 	}
 }
@@ -186,7 +201,6 @@
 	.category-page__container {
 		flex-direction: column;
 		margin-top: 0;
-		margin-bottom: 120px;
 	}
 }
 
@@ -215,5 +229,47 @@
 		font-size: 32px;
 		margin-bottom: 48px;
 	}
+}
 
+/* single.css */
+@media (max-width: 400px) {
+
+	.page-header__wrapper {
+		justify-content: space-between;
+	}
+
+	.page-header__contents-btn {
+		width: calc(100% - 52px);
+	}
+
+	.page-header__input-container {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		width: 40px;
+		right: 0;
+		left: auto;
+		transition: background-color 0.2s ease-in-out;
+	}
+
+	.page-header__input-container:active {
+		background-color: var(--gray-back);
+	}
+
+	.page-header__input {
+		opacity: 0;
+		width: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+	}
+
+	.page-header__input-container:focus-within .page-header__input {
+		opacity: 1;
+		width: 100%;
+		pointer-events: auto;
+	}
+
+	.page-header__input-container svg {
+		pointer-events: none;
+	}
 }

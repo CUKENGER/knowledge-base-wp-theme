@@ -16,12 +16,17 @@
 .footer-container p {
 	font-size: 14px;
 	line-height: 110%;
+	font-weight: 500;
 	color: var(--gray-light);
 	transition: color 0.2s ease-in-out;
 }
 
 .footer-container__link {
 	font-weight: 600;
+	font-size: 14px;
+	line-height: 110%;
+	transition: color 0.2s ease-in-out;
+	color: var(--gray-light);
 }
 
 .footer-container__link:hover {

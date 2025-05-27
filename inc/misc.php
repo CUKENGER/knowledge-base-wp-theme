@@ -135,3 +135,94 @@ function banner_shortcode($atts)
 	return $html;
 }
 add_shortcode('banner_pulse', 'banner_shortcode');
+
+// functions.php
+function tgx_register_suggestions_settings() {
+    for ($i = 1; $i <= 5; $i++) {
+        register_setting('tgx_suggestions_group', "tgx_suggestion_post_$i", array(
+            'sanitize_callback' => 'absint',
+            'default' => 0,
+        ));
+    }
+
+    add_settings_section(
+        'tgx_suggestions_section',
+        'Релевантные статьи для главной',
+        '__return_empty_string',
+        'tgx-suggestions'
+    );
+
+    for ($i = 1; $i <= 5; $i++) {
+        add_settings_field(
+            "tgx_suggestion_post_$i",
+            "Статья $i",
+            'tgx_suggestion_post_field_callback',
+            'tgx-suggestions',
+            'tgx_suggestions_section',
+            array('index' => $i)
+        );
+    }
+}
+add_action('admin_init', 'tgx_register_suggestions_settings');
+
+function tgx_suggestion_post_field_callback($args) {
+    $index = $args['index'];
+    $value = get_option("tgx_suggestion_post_$index", 0);
+    $posts = get_posts(array(
+        'post_type' => 'post',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+    ));
+    ?>
+    <select name="tgx_suggestion_post_<?php echo esc_attr($index); ?>">
+        <option value="0">Выберите пост</option>
+        <?php foreach ($posts as $post): ?>
+            <option value="<?php echo esc_attr($post->ID); ?>" <?php selected($value, $post->ID); ?>>
+                <?php echo esc_html($post->post_title); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+
+function tgx_add_suggestions_menu() {
+    add_menu_page(
+        'Релевантные статьи',
+        'Релевантные статьи',
+        'manage_options',
+        'tgx-suggestions',
+        'tgx_suggestions_page_callback',
+        'dashicons-admin-links',
+        80
+    );
+}
+add_action('admin_menu', 'tgx_add_suggestions_menu');
+
+function tgx_suggestions_page_callback() {
+    ?>
+    <div class="wrap">
+        <h1>Релевантные статьи</h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('tgx_suggestions_group');
+            do_settings_sections('tgx-suggestions');
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+
+function tgx_remove_emoji($string) {
+    // Удаляем эмодзи (Unicode-символы)
+    $string = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $string); // Эмоции
+    $string = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $string); // Символы и пиктограммы
+    $string = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $string); // Транспорт и карты
+    $string = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $string); // Флаги
+    $string = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $string);   // Разные символы
+    $string = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $string);   // Дингбаты
+    $string = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $string); // Дополнения
+    // Удаляем лишние пробелы
+    return trim($string);
+}

@@ -65,11 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
 						link.href = item.link
 						link.className = 'page-header-search-result-item show'
 						link.innerHTML = `
-                            <span>${item.title}</span>
-                            <svg class="page-header__post-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-                                <use href="#chevron-icon"></use>
-                            </svg>
-                        `
+							<span>${item.title}</span>
+							<svg class="page-header__post-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
+								<use href="#chevron-icon"></use>
+							</svg>
+						`
 						link.addEventListener('click', () => {
 							input.value = ''
 							resultsContainer.classList.remove('active')
@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Handle input blur
 	input.addEventListener('blur', e => {
 		const isResultsClicked = resultsContainer.contains(e.relatedTarget)
-		if (!isResultsClicked && input !== document.activeElement) {
+		const isClearButtonClicked = clearButton.contains(e.relatedTarget)
+		if (!isResultsClicked && !isClearButtonClicked) {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
 			overlay.classList.remove('active')
@@ -139,8 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		resultsContainer.classList.remove('active')
 		resultsContainer.innerHTML = ''
 		toggleClearButton()
-		wrapper.classList.remove('expanded')
-		pageHeader.style.zIndex = '10'
+		// Убрано wrapper.classList.remove('expanded') чтобы инпут не сворачивался
+		pageHeader.style.zIndex = '30'
 		input.focus()
 	})
 

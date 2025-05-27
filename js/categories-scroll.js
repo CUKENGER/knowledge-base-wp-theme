@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		let startX
 		let scrollLeft
 
+		// Проверка переполнения для .suggestions
+		function checkOverflow() {
+			if (container.classList.contains('suggestions')) {
+				if (container.scrollWidth > container.clientWidth) {
+					container.classList.add('overflow')
+				} else {
+					container.classList.remove('overflow')
+				}
+			}
+		}
+
 		// Начало перетаскивания
 		container.addEventListener('mousedown', e => {
 			if (e.target.closest('.suggestions-btn, .common-breadcrumbs-link')) return
@@ -33,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			container.classList.remove('dragging')
 		})
 
+		// Выход мыши
 		container.addEventListener('mouseleave', () => {
 			isDragging = false
 			container.classList.remove('dragging')
@@ -48,7 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 
 		// Инициализация и обновление при ресайзе
+		checkOverflow() // Проверяем переполнение при загрузке
 		updateCursor()
-		window.addEventListener('resize', updateCursor)
+		window.addEventListener('resize', () => {
+			updateCursor()
+			checkOverflow() // Проверяем переполнение при ресайзе
+		})
 	})
 })

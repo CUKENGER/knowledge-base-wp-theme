@@ -77,8 +77,11 @@ if (is_single()) {
 			</svg>
 			<input class='page-header__input' type="text" placeholder='Какой у вас вопрос?'>
 			<button class='page-header__input-clear' style='display: none;'>
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M12 4L4 12M4 4L12 12" stroke="#ABB0BA" stroke-width="2" stroke-linecap="round" />
+				<svg class="page-header__input-clear__icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+					xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<circle cx="12" cy="12" r="10" fill="currentColor" />
+					<path d="M9 15L15 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M15 15L9 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</button>
 			<div class='page-header__search-results'></div>

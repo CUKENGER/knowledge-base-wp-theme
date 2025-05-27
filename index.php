@@ -24,10 +24,22 @@ get_header();
         <div class="search-results"></div>
       </div>
       <div class='suggestions'>
-        <button class="suggestions-btn">Настройка доступа</button>
-        <button class="suggestions-btn">Аналитика</button>
-        <button class="suggestions-btn">Подключение бота</button>
-        <button class="suggestions-btn">Умная кнопка</button>
+        <?php
+        $has_posts = false;
+        for ($i = 1; $i <= 5; $i++):
+          $post_id = get_option("tgx_suggestion_post_$i", 0);
+          if ($post_id):
+            $has_posts = true;
+            $link = esc_url(get_permalink($post_id));
+            $raw_title = get_the_title($post_id);
+            $title = esc_html(tgx_remove_emoji($raw_title)); // Очищаем эмодзи и экранируем
+            $class = "suggestions-btn suggestions-btn--$i";
+            ?>
+            <a href="<?php echo $link; ?>" class="<?php echo esc_attr($class); ?>">
+              <?php echo $title; ?>
+            </a>
+          <?php endif; ?>
+        <?php endfor; ?>
       </div>
       <section class='category-container'>
         <?php

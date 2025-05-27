@@ -365,8 +365,16 @@
 }
 
 .page-header__input-clear svg {
-	width: 16px;
-	height: 16px;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	color: var(--gray-dark);
+	transition: color 0.2s ease-in-out;
+	cursor: pointer;
+}
+
+.page-header__input-clear:hover svg {
+	color: var(--black);
 }
 
 /* Контейнер кнопки закрытия меню */
@@ -396,5 +404,48 @@
 @media (max-width: 850px) {
 	.page-header--tablet {
 		display: flex;
+	}
+}
+
+/* single.css */
+@media (max-width: 400px) {
+
+	.page-header__wrapper {
+		justify-content: space-between;
+	}
+
+	.page-header__contents-btn {
+		width: calc(100% - 52px);
+	}
+
+	.page-header__input-container {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		width: 40px;
+		right: 0;
+		left: auto;
+		transition: background-color 0.2s ease-in-out;
+	}
+
+	.page-header__input-container:active {
+		background-color: var(--gray-back);
+	}
+
+	.page-header__input {
+		opacity: 0;
+		width: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+	}
+
+	.page-header__input-container:focus-within .page-header__input {
+		opacity: 1;
+		width: 100%;
+		pointer-events: auto;
+	}
+
+	.page-header__input-container svg {
+		pointer-events: none;
 	}
 }

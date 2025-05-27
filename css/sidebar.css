@@ -64,6 +64,9 @@
 	display: none;
 	color: var(--gray-dark);
 	transition: color 0.2s ease-in-out;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
 }
 
 .sidebar__search-clear:hover {
