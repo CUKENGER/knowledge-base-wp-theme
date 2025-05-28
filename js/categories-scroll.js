@@ -9,39 +9,48 @@ document.addEventListener('DOMContentLoaded', () => {
 		let startX
 		let scrollLeft
 
-		// Проверка переполнения для .suggestions
 		// Проверка переполнения
 		function checkOverflow() {
-			// Для .suggestions проверяем ширину внутренних элементов
 			if (container.classList.contains('suggestions')) {
 				const buttons = container.querySelectorAll('.suggestions-btn')
 				let totalWidth = 0
 				buttons.forEach(button => {
-					const style = window.getComputedStyle(button)
-					const width =
-						button.offsetWidth +
-						parseFloat(style.marginLeft) +
-						parseFloat(style.marginRight)
-					totalWidth += width
+					totalWidth += button.getBoundingClientRect().width
 				})
-				// Добавляем gap (8px из CSS) между кнопками
-				const gap = 8 * (buttons.length - 1)
+				const gap = buttons.length > 1 ? 8 * (buttons.length - 1) : 0
 				totalWidth += gap
 
-				// Сравниваем с clientWidth контейнера, учитываем допуск
-				const hasOverflow = totalWidth > container.clientWidth + 2
-				if (hasOverflow) {
+				// Логи для отладки
+				console.log('Suggestions:', {
+					totalWidth: totalWidth.toFixed(2),
+					clientWidth: container.clientWidth.toFixed(2),
+					buttonsCount: buttons.length,
+					gap: gap,
+					hasOverflow: totalWidth > container.clientWidth + 10,
+					currentClasses: container.className,
+				})
+
+				// Проверка на переполнение с допуском 10px
+				if (totalWidth > container.clientWidth + 10) {
 					container.classList.add('overflow')
+					console.log('Added overflow to suggestions')
 				} else {
 					container.classList.remove('overflow')
+					console.log('Removed overflow from suggestions')
 				}
 			} else {
-				// Для .common-breadcrumbs используем старую логику
-				const hasOverflow = container.scrollWidth > container.clientWidth + 2
+				const hasOverflow = container.scrollWidth > container.clientWidth + 10
+				console.log('Breadcrumbs:', {
+					scrollWidth: container.scrollWidth.toFixed(2),
+					clientWidth: container.clientWidth.toFixed(2),
+					hasOverflow: hasOverflow,
+				})
 				if (hasOverflow) {
 					container.classList.add('overflow')
+					console.log('Added overflow to breadcrumbs')
 				} else {
 					container.classList.remove('overflow')
+					console.log('Removed overflow from breadcrumbs')
 				}
 			}
 		}

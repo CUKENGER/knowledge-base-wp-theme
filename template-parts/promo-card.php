@@ -13,5 +13,5 @@ $link = get_option('tgx_promo_link', 'https://example.com/workshop');
 		<p class='promo-card__title'><?php echo esc_html($title); ?></p>
 		<p class='promo-card__description'><?php echo esc_html($description); ?></p>
 	</div>
-	<a href="<?php echo esc_url($link); ?>" class='promo-card__btn'>Подробнее</a>
+	<a href="<?php echo esc_url($link); ?>" target='_blank' class='promo-card__btn'>Подробнее</a>
 </div>
