@@ -46,7 +46,7 @@ get_header();
         $categories = get_transient('tgx_categories');
         if (false === $categories) {
           $categories = get_categories([
-            'hide_empty' => true,
+            'hide_empty' => false,
             'orderby' => 'name',
             'order' => 'ASC',
           ]);
