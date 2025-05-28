@@ -224,18 +224,7 @@
 	line-height: 100%;
 }
 
-@media (max-width: 850px) {
-
-	.category-page__container {
-		margin-bottom: 100px;
-	}
-
-	.category-page__content {
-		max-width: 100%;
-	}
-}
-
-@media (max-width: 780px) {
+@media (max-width: 900px) {
 	.single__sidebar {
 		display: none;
 	}
@@ -250,6 +239,18 @@
 
 	.single__promo-card--tablet {
 		display: block;
+	}
+}
+
+
+@media (max-width: 850px) {
+
+	.category-page__container {
+		margin-bottom: 100px;
+	}
+
+	.category-page__content {
+		max-width: 100%;
 	}
 }
 

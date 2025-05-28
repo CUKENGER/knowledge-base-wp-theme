@@ -404,7 +404,7 @@
 }
 
 /* Медиа-запросы */
-@media (max-width: 780px) {
+@media (max-width: 900px) {
 	.page-header--tablet {
 		display: flex;
 	}

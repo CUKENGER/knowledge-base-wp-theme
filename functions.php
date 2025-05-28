@@ -68,6 +68,7 @@ function tgx_note_block_shortcode($atts, $content = null)
 	];
 
 	$content = wp_kses($content, $allowed_tags);
+	error_log('note-block: Контент после wp_kses: ' . $content);
 
 	if (!empty($atts['link']) && !empty($atts['link_text'])) {
 		if (!filter_var($atts['link'], FILTER_VALIDATE_URL)) {
@@ -75,16 +76,37 @@ function tgx_note_block_shortcode($atts, $content = null)
 			return '<div class="note-block note-block--error">Ошибка: Неверный URL.</div>';
 		}
 		$link_url = esc_url($atts['link']);
-		$link_text = esc_html($atts['link_text']);
-		$link_html = sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', $link_url, $link_text);
-		$link_text_escaped = preg_quote($link_text, '/');
-		$pattern = "/\b$link_text_escaped\b/i"; // i для игнора регистра
-		$new_content = preg_replace($pattern, $link_html, $content, 1);
-		if ($new_content === $content) {
-			error_log("note-block: Не удалось заменить '$link_text' в контенте: '$content'");
+		$link_text = trim($atts['link_text']); // Убираем пробелы
+		error_log('note-block: link_text: ' . $link_text);
+
+		$link_html = sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', $link_url, esc_html($link_text));
+
+		// Нормализуем контент и link_text
+		$normalized_content = str_replace(["\r", "\n", "\t"], ' ', $content);
+		$normalized_link_text = str_replace(["\r", "\n", "\t"], ' ', $link_text);
+
+		// Пробуем замену с учетом @
+		$pattern = '/\b' . preg_quote($normalized_link_text, '/') . '\b/i';
+		$new_content = preg_replace($pattern, $link_html, $normalized_content, 1);
+
+		if ($new_content === $normalized_content) {
+			error_log("note-block: Не удалось заменить '$normalized_link_text' в контенте: '$normalized_content'");
+			// Пробуем без @, если есть
+			if (strpos($link_text, '@') === 0) {
+				$link_text_no_at = ltrim($link_text, '@');
+				$pattern_no_at = '/\b' . preg_quote($link_text_no_at, '/') . '\b/i';
+				$link_html_no_at = sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', $link_url, esc_html($link_text));
+				$new_content = preg_replace($pattern_no_at, $link_html_no_at, $normalized_content, 1);
+				if ($new_content !== $normalized_content) {
+					$content = $new_content;
+					error_log("note-block: Успешно заменили '$link_text_no_at' на ссылку");
+				} else {
+					error_log("note-block: Не удалось заменить даже '$link_text_no_at' в контенте: '$normalized_content'");
+				}
+			}
 		} else {
 			$content = $new_content;
-			error_log("note-block: Успешно заменили '$link_text' на ссылку");
+			error_log("note-block: Успешно заменили '$normalized_link_text' на ссылку");
 		}
 	} else {
 		error_log('note-block: Отсутствует link или link_text');
