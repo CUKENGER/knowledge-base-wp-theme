@@ -1,7 +1,6 @@
 <?php
 // Функция для удаления эмодзи из строки
-function remove_emoji($string)
-{
+function remove_emoji($string) {
   $pattern = '/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{1F700}-\x{1F77F}\x{1F780}-\x{1F7FF}\x{1F800}-\x{1F8FF}\x{1F900}-\x{1F9FF}\x{1FA00}-\x{1FA6F}\x{1FA70}-\x{1FAFF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{1F1E0}-\x{1F1FF}]/u';
   return preg_replace($pattern, '', $string);
 }
@@ -100,8 +99,8 @@ function remove_emoji($string)
       <symbol id="chevron-icon" viewBox="0 0 8 16">
         <path d="M2 3L6 8L2 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
           fill="none" />
-  </svg>
-  </defs>
+      </symbol>
+    </defs>
   </svg>
   <div class="container">
     <div class="category-page__container">
@@ -155,90 +154,7 @@ function remove_emoji($string)
       </div>
 
       <!-- Вставка sidebar -->
-      <?php
-      $active_category_id = !empty($post_categories) ? $post_categories[0] : 0;
-      ?>
-      <div class='single__sidebar-container'>
-        <section class="sidebar single__sidebar">
-          <div class="sidebar__search-container">
-            <div class="sidebar__search-wrapper">
-              <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/search-icon.svg'); ?>" alt="Поиск"
-                aria-hidden="true" />
-              <input type="text" class="sidebar__search-input" placeholder="Какой у вас вопрос?">
-              <svg class="sidebar__search-clear" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" fill="currentColor" />
-                <path d="M9 15L15 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M15 15L9 9" stroke="#EAEAED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div class="sidebar__search-results"></div>
-          </div>
-          <div class="sidebar__categories">
-            <?php
-            $categories = get_transient('tgx_categories') ?: get_categories(['hide_empty' => false]);
-            if ($categories):
-              set_transient('tgx_categories', $categories, HOUR_IN_SECONDS);
-              global $post;
-              $tmp_post = $post;
-              foreach ($categories as $category):
-                $is_active = $category->term_id === $active_category_id ? ' is-active' : '';
-                $is_post_list_active = $category->term_id === $active_category_id ? ' active' : '';
-                ?>
-                <button class="sidebar__category-title<?php echo esc_attr($is_active); ?>"
-                  data-category-id="<?php echo esc_attr($category->term_id); ?>" type="button"
-                  aria-expanded="<?php echo $is_active ? 'true' : 'false'; ?>">
-                  <span class="sidebar__category-content">
-                    <?php echo esc_html($category->name); ?>
-                    <span class="sidebar__category-count"><?php echo esc_html($category->count); ?></span>
-                  </span>
-                  <svg class="sidebar__category-arrow" width="16" height="8" viewBox="0 0 16 8" fill="none"
-                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M3 2L8 6L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-                </button>
-                <div class="sidebar__post-list<?php echo esc_attr($is_post_list_active); ?>"
-                  data-category-id="<?php echo esc_attr($category->term_id); ?>">
-                  <?php
-                  $posts = get_posts([
-                    'category' => $category->term_id,
-                    'numberposts' => 10,
-                    'post_status' => 'publish',
-                  ]);
-                  if (empty($posts)):
-                    echo '<p class="sidebar__no-posts">Нет постов в этой категории.</p>';
-                  else:
-                    foreach ($posts as $p):
-                      setup_postdata($p);
-                      $is_post_active = $p->ID === $current_post_id ? ' active' : '';
-                      ?>
-                      <a href="<?php echo esc_url(get_permalink($p->ID)); ?>"
-                        class="sidebar__post-item<?php echo esc_attr($is_post_active); ?>">
-                        <?php echo esc_html(get_the_title($p->ID)); ?>
-                        <svg class="sidebar__post-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-                          <use href="#chevron-icon"></use>
-                        </svg>
-                      </a>
-                    <?php endforeach; ?>
-                    <?php wp_reset_postdata(); ?>
-                  <?php endif; ?>
-                </div>
-              <?php endforeach; ?>
-              <?php setup_postdata($tmp_post); ?>
-            <?php endif; ?>
-            <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
-              <defs>
-                <symbol id="chevron-icon" viewBox="0 0 8 16">
-                  <path d="M2 3L6 8L2 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" fill="none" />
-                </symbol>
-              </defs>
-            </svg>
-        </section>
-        <?php get_template_part('template-parts/promo-card'); ?>
-      </div>
-      <!-- Конец sidebar -->
+      <?php get_template_part('template-parts/sidebar'); ?>
     </div>
   </div>
   <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">

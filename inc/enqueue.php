@@ -91,6 +91,9 @@ function tgx_theme_enqueue_scripts()
 		'ajaxUrl' => admin_url('admin-ajax.php')
 	]);
 
+	error_log('is_single: ' . (is_single() ? 'true' : 'false'));
+	error_log('is_category: ' . (is_category() ? 'true' : 'false'));
+
 	// Скрипты для single и category
 	$conditional_js = [
 		'tgx-sidebar-toggle' => '/js/sidebar-toggle.js',
