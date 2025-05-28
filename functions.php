@@ -1,4 +1,3 @@
-
 <?php
 // Подключение модулей
 delete_transient('tgx_categories');
@@ -13,32 +12,27 @@ add_theme_support('post-thumbnails');
 // Шорткод для copy-block
 function copy_block_shortcode($atts, $content = null)
 {
-	// Настраиваемые параметры
 	$atts = shortcode_atts([
-		'type' => 'info', // Тип блока: info, warning, error
+		'type' => 'info',
 	], $atts, 'copy-block');
 
-	// Проверяем, есть ли содержимое
 	if (empty($content)) {
 		return '';
 	}
 
-	// Уникальный ID для блока
 	$block_id = uniqid('copy-block-');
-
-	// Экранируем содержимое для отображения
 	$display_content = wp_kses($content, [
-		'b' => [],
+		'b' => 'info',
 		'strong' => [],
 		'i' => [],
 		'em' => [],
 	]);
-
-	// Подготавливаем текст для копирования (без HTML)
 	$copy_content = wp_strip_all_tags($content);
 
-	// Формируем HTML
-	$output = '<div class="copy-block copy-block--' . esc_attr($atts['type']) . '" id="' . esc_attr($block_id) . '">';
+	$valid_types = ['info', 'warning', 'error'];
+	$type = in_array($atts['type'], $valid_types) ? $atts['type'] : 'info';
+
+	$output = '<div class="copy-block copy-block--' . esc_attr($type) . '" id="' . esc_attr($block_id) . '" onclick="copyBlockText(\'' . esc_attr($block_id) . '\', \'' . esc_js($copy_content) . '\')">';
 	$output .= '<div class="copy-block__content">' . $display_content . '</div>';
 	$output .= '<button class="copy-button" aria-label="Копировать текст" onclick="copyBlockText(\'' . esc_attr($block_id) . '\', \'' . esc_js($copy_content) . '\')">';
 	$output .= '<svg width="20" height="28" viewBox="0 0 20 28" fill="none" xmlns="http://www.w3.org/2000/svg">';
@@ -53,57 +47,42 @@ add_shortcode('copy-block', 'copy_block_shortcode');
 // Шорткод для note-block
 function tgx_note_block_shortcode($atts, $content = null)
 {
-	// Настраиваемые параметры
 	$atts = shortcode_atts([
 		'type' => 'info',
 		'link' => '',
 		'link_text' => '',
-		'link_word' => '',
 	], $atts, 'note-block');
 
-	// Проверяем, есть ли содержимое
 	if (empty($content)) {
 		return '';
 	}
 
-	// Разрешаем безопасные HTML-теги
 	$allowed_tags = [
 		'b' => [],
 		'strong' => [],
 		'i' => [],
 		'em' => [],
+		'p' => [],
+		'br' => [],
 	];
 
-	// Экранируем содержимое
 	$content = wp_kses($content, $allowed_tags);
 
-	// Формируем ссылку
-	$link_html = '';
 	if (!empty($atts['link']) && !empty($atts['link_text'])) {
 		if (!filter_var($atts['link'], FILTER_VALIDATE_URL)) {
-			return '<div class="note-block note-block--error">Ошибка: Неверный URL в шорткоде.</div>';
+			return '<div class="note-block note-block--error">Ошибка: Неверный URL.</div>';
 		}
 		$link_url = esc_url($atts['link']);
 		$link_text = esc_html($atts['link_text']);
-		$link_html = sprintf(
-			'<a href="%s" target="_blank" rel="noopener">%s</a>',
-			$link_url,
-			$link_text
-		);
+		$link_html = sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', $link_url, $link_text);
+		$link_text_escaped = preg_quote($link_text, '/');
+		$content = preg_replace("/\b$link_text_escaped\b/", $link_html, $content, 1);
 	}
 
-	// Заменяем указанное слово на ссылку
-	if ($link_html && !empty($atts['link_word'])) {
-		$link_word = preg_quote(esc_attr($atts['link_word']), '/');
-		$content = preg_replace("/\b$link_word\b/", $link_html, $content, 1);
-	} elseif ($link_html) {
-		$content = preg_replace('/\b(ссылке|ссылка)\b/i', $link_html, $content, 1);
-	}
+	$valid_types = ['info', 'warning', 'error'];
+	$type = in_array($atts['type'], $valid_types) ? $atts['type'] : 'info';
 
-	// Экранируем тип
-	$type = esc_attr($atts['type']);
-
-	return '<div class="note-block note-block--' . $type . '">' . $content . '</div>';
+	return '<div class="note-block note-block--' . esc_attr($type) . '">' . $content . '</div>';
 }
 add_shortcode('note-block', 'tgx_note_block_shortcode');
 ?>

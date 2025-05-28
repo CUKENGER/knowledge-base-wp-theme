@@ -1,10 +1,12 @@
-function copyBlockText(blockId, text) {
+function copyBlockText(blockId, textToCopy) {
+	if (!textToCopy) {
+		const block = document.getElementById(blockId)
+		if (!block) return
+		textToCopy = block.querySelector('.copy-block__content').textContent.trim()
+	}
+
 	navigator.clipboard
-		.writeText(text)
-		.then(() => {
-			const block = document.getElementById(blockId)
-			block.classList.add('copied')
-		})
+		.writeText(textToCopy)
 		.catch(err => {
 			console.error('Ошибка копирования:', err)
 		})
