@@ -62,7 +62,7 @@
 	font-weight: 500;
 }
 
-.post-content ol { 
+.post-content ol {
 	font-weight: 500;
 }
 
@@ -77,6 +77,11 @@
 	line-height: 120%;
 	color: var(--black);
 	font-family: 'Ubuntu';
+}
+
+.post-content h1,
+.post-content h2 {
+	margin-top: 64px;
 }
 
 .post-content h1 {
