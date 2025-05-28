@@ -20,37 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
 				const gap = buttons.length > 1 ? 8 * (buttons.length - 1) : 0
 				totalWidth += gap
 
-				// Логи для отладки
-				console.log('Suggestions:', {
-					totalWidth: totalWidth.toFixed(2),
-					clientWidth: container.clientWidth.toFixed(2),
-					buttonsCount: buttons.length,
-					gap: gap,
-					hasOverflow: totalWidth > container.clientWidth + 10,
-					currentClasses: container.className,
-				})
-
 				// Проверка на переполнение с допуском 10px
 				if (totalWidth > container.clientWidth + 10) {
 					container.classList.add('overflow')
-					console.log('Added overflow to suggestions')
 				} else {
 					container.classList.remove('overflow')
-					console.log('Removed overflow from suggestions')
 				}
 			} else {
 				const hasOverflow = container.scrollWidth > container.clientWidth + 10
-				console.log('Breadcrumbs:', {
-					scrollWidth: container.scrollWidth.toFixed(2),
-					clientWidth: container.clientWidth.toFixed(2),
-					hasOverflow: hasOverflow,
-				})
 				if (hasOverflow) {
 					container.classList.add('overflow')
-					console.log('Added overflow to breadcrumbs')
 				} else {
 					container.classList.remove('overflow')
-					console.log('Removed overflow from breadcrumbs')
 				}
 			}
 		}

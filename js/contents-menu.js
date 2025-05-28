@@ -26,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			scrollPosition = window.scrollY
 			overlay.style.zIndex = '100' // Увеличиваем z-index для overlay
 			contentsMenu.style.zIndex = '101' // Меню выше overlay
-			console.log('Меню открыто:', {
-				overlayZIndex: overlay.style.zIndex,
-				menuZIndex: contentsMenu.style.zIndex,
-			})
 			overlay.classList.add('active')
 			body.classList.add('overlay-active')
 			body.style.overflow = 'hidden'
@@ -38,10 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else {
 			overlay.style.zIndex = '' // Сбрасываем z-index
 			contentsMenu.style.zIndex = ''
-			console.log('Меню закрыто:', {
-				overlayZIndex: overlay.style.zIndex,
-				menuZIndex: contentsMenu.style.zIndex,
-			})
 			overlay.classList.remove('active')
 			body.classList.remove('overlay-active')
 			body.style.overflow = ''
@@ -59,10 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				contentsBtn.setAttribute('aria-expanded', 'false')
 				overlay.style.zIndex = ''
 				contentsMenu.style.zIndex = ''
-				console.log('Меню закрыто (кнопка Закрыть):', {
-					overlayZIndex: overlay.style.zIndex,
-					menuZIndex: contentsMenu.style.zIndex,
-				})
 				overlay.classList.remove('active')
 				body.classList.remove('overlay-active')
 				body.style.overflow = ''
@@ -82,10 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			contentsBtn.setAttribute('aria-expanded', 'false')
 			overlay.style.zIndex = ''
 			contentsMenu.style.zIndex = ''
-			console.log('Меню закрыто (клик вне):', {
-				overlayZIndex: overlay.style.zIndex,
-				menuZIndex: contentsMenu.style.zIndex,
-			})
 			overlay.classList.remove('active')
 			body.classList.remove('overlay-active')
 			body.style.overflow = ''
@@ -100,10 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			contentsBtn.setAttribute('aria-expanded', 'false')
 			overlay.style.zIndex = ''
 			contentsMenu.style.zIndex = ''
-			console.log('Меню закрыто (Esc):', {
-				overlayZIndex: overlay.style.zIndex,
-				menuZIndex: contentsMenu.style.zIndex,
-			})
 			overlay.classList.remove('active')
 			body.classList.remove('overlay-active')
 			body.style.overflow = ''
@@ -118,10 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			contentsBtn.setAttribute('aria-expanded', 'false')
 			overlay.style.zIndex = ''
 			contentsMenu.style.zIndex = ''
-			console.log('Меню закрыто (клик по overlay):', {
-				overlayZIndex: overlay.style.zIndex,
-				menuZIndex: contentsMenu.style.zIndex,
-			})
 			overlay.classList.remove('active')
 			body.classList.remove('overlay-active')
 			body.style.overflow = ''
