@@ -26,7 +26,7 @@ get_header();
       <div class='suggestions'>
         <?php
         $has_posts = false;
-        for ($i = 1; $i <= 5; $i++):
+        for ($i = 1; $i <= 7; $i++):
           $post_id = get_option("tgx_suggestion_post_$i", 0);
           if ($post_id):
             $has_posts = true;
@@ -56,8 +56,9 @@ get_header();
         foreach ($categories as $category):
           $posts_query = new WP_Query([
             'cat' => $category->term_id,
-            'posts_per_page' => 4,
+            'posts_per_page' => 7,
             'post_status' => 'publish',
+            'post_type' => 'post',
           ]);
           if ($posts_query->have_posts()):
             ?>
