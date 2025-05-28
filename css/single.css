@@ -129,7 +129,7 @@
 
 .post-content a {
 	color: var(--accent-blue, #0073aa);
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 .post-content .wp-block-image {
