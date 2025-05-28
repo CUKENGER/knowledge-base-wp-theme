@@ -10,13 +10,39 @@ document.addEventListener('DOMContentLoaded', () => {
 		let scrollLeft
 
 		// Проверка переполнения для .suggestions
+		// Проверка переполнения
 		function checkOverflow() {
-			// Допуск в 2 пикселя для избежания ложных срабатываний
-			const hasOverflow = container.scrollWidth > container.clientWidth + 2
-			if (hasOverflow) {
-				container.classList.add('overflow')
+			// Для .suggestions проверяем ширину внутренних элементов
+			if (container.classList.contains('suggestions')) {
+				const buttons = container.querySelectorAll('.suggestions-btn')
+				let totalWidth = 0
+				buttons.forEach(button => {
+					const style = window.getComputedStyle(button)
+					const width =
+						button.offsetWidth +
+						parseFloat(style.marginLeft) +
+						parseFloat(style.marginRight)
+					totalWidth += width
+				})
+				// Добавляем gap (8px из CSS) между кнопками
+				const gap = 8 * (buttons.length - 1)
+				totalWidth += gap
+
+				// Сравниваем с clientWidth контейнера, учитываем допуск
+				const hasOverflow = totalWidth > container.clientWidth + 2
+				if (hasOverflow) {
+					container.classList.add('overflow')
+				} else {
+					container.classList.remove('overflow')
+				}
 			} else {
-				container.classList.remove('overflow')
+				// Для .common-breadcrumbs используем старую логику
+				const hasOverflow = container.scrollWidth > container.clientWidth + 2
+				if (hasOverflow) {
+					container.classList.add('overflow')
+				} else {
+					container.classList.remove('overflow')
+				}
 			}
 		}
 
