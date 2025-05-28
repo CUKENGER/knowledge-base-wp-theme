@@ -1,6 +1,7 @@
 
 <?php
 // Подключение модулей
+delete_transient('tgx_categories');
 require_once get_template_directory() . '/inc/enqueue.php';
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/seo.php';
