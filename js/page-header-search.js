@@ -43,8 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (!query) {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
-			wrapper.classList.remove('expanded')
-			pageHeader.style.zIndex = '10'
 			return
 		}
 

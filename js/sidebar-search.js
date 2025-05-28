@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (!query) {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
-			overlay.classList.remove('active')
 			return
 		}
 
