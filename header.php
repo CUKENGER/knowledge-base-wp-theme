@@ -10,25 +10,43 @@
   $site_keywords = get_theme_mod('tgx_site_keywords');
 
   if (is_front_page() || is_home()) {
-    $title = $site_name . ' | ' . $site_description;
+    // Главная страница: добавляем | только если есть описание
+    $title = $site_name;
+    if (!empty($site_description)) {
+      $title .= ' | ' . $site_description;
+    }
     $description = $site_description;
     $keywords = $site_keywords;
   } elseif (is_single()) {
     $custom_title = get_post_meta(get_the_ID(), '_tgx_seo_title', true);
     $custom_description = get_post_meta(get_the_ID(), '_tgx_seo_description', true);
     $custom_keywords = get_post_meta(get_the_ID(), '_tgx_seo_keywords', true);
-    $title = $custom_title ?: get_the_title() . ' | ' . $site_name;
+    // Пост: добавляем | только если есть заголовок
+    $post_title = $custom_title ?: get_the_title();
+    $title = $post_title;
+    if (!empty($post_title) && !empty($site_name)) {
+      $title .= ' | ' . $site_name;
+    }
     $description = $custom_description ?: wp_trim_words(get_the_excerpt(), 30, '...');
     $keywords = $custom_keywords ?: implode(', ', wp_list_pluck(get_the_category(), 'name'));
   } elseif (is_category()) {
     $category = get_queried_object();
     $category_description = get_term_meta($category->term_id, '_tgx_category_description', true);
     $category_keywords = get_term_meta($category->term_id, '_tgx_category_keywords', true);
-    $title = $category->name . ' | ' . $site_name;
+    // Категория: добавляем | только если есть название категории
+    $title = $category->name;
+    if (!empty($category->name) && !empty($site_name)) {
+      $title .= ' | ' . $site_name;
+    }
     $description = $category_description ?: $site_description;
     $keywords = $category_keywords ?: $site_keywords;
   } else {
-    $title = wp_title('', false) . ' | ' . $site_name;
+    // Другие страницы: добавляем | только если есть wp_title
+    $wp_title = wp_title('', false);
+    $title = $wp_title;
+    if (!empty($wp_title) && !empty($site_name)) {
+      $title .= ' | ' . $site_name;
+    }
     $description = $site_description;
     $keywords = $site_keywords;
   }
@@ -36,6 +54,15 @@
   <title><?php echo esc_html($title); ?></title>
   <meta name="description" content="<?php echo esc_attr($description); ?>">
   <meta name="keywords" content="<?php echo esc_attr($keywords); ?>">
+
+  <link rel="icon" type="image/x-icon"
+    href="<?php echo esc_url(get_template_directory_uri() . '/assets/favicon.ico'); ?>">
+  <link rel="shortcut icon" type="image/x-icon"
+    href="<?php echo esc_url(get_template_directory_uri() . '/assets/favicon.ico'); ?>">
+  <link rel="apple-touch-icon" sizes="180x180"
+    href="<?php echo esc_url(get_template_directory_uri() . '/assets/apple-touch-icon.png'); ?>">
+  <link rel="icon" type="image/png" sizes="144x144"
+    href="<?php echo esc_url(get_template_directory_uri() . '/assets/favicon.png'); ?>">
   <?php wp_head(); ?>
 </head>
 
