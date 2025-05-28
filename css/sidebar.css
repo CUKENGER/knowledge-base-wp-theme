@@ -203,6 +203,7 @@
 .sidebar__post-list.active {
 	opacity: 1;
 	height: auto;
+	display: flex;
 	transform: translateY(0);
 }
 

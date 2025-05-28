@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	contentsBtn.addEventListener('click', e => {
 		e.stopPropagation()
 		const isExpanded = contentsBtn.getAttribute('aria-expanded') === 'true'
-		contentsBtn.setAttribute('aria-expanded', !isExpanded)
+	contentsBtn.setAttribute('aria-expanded', !isExpanded)
 		contentsMenu.classList.toggle('active')
 
 		if (!isExpanded) {
