@@ -28,14 +28,64 @@ function copy_block_shortcode($atts, $content = null)
 add_shortcode('copy_block', 'copy_block_shortcode');
 
 // Шорткод для note-block (без изменений)
-function note_block_shortcode($atts, $content = null)
+function tgx_note_block_shortcode($atts, $content = null)
 {
+	// Настраиваемые параметры
+	$atts = shortcode_atts([
+		'type' => 'info', // Тип заметки: info, warning, error
+		'link' => '', // URL ссылки
+		'link_text' => '', // Текст ссылки
+		'link_word' => '', // Слово в содержимом, которое станет ссылкой
+	], $atts, 'note-block');
+
+	// Проверяем, есть ли содержимое
 	if (empty($content)) {
 		return '';
 	}
-	return '<div class="note-block">' . do_shortcode($content) . '</div>';
+
+	// Разрешаем безопасные HTML-теги в содержимом (исключая <a>)
+	$allowed_tags = [
+		'b' => [],
+		'strong' => [],
+		'i' => [],
+		'em' => [],
+	];
+
+	// Экранируем содержимое
+	$content = wp_kses($content, $allowed_tags);
+
+	// Формируем ссылку, если указаны link и link_text
+	$link_html = '';
+	if (!empty($atts['link']) && !empty($atts['link_text'])) {
+		// Проверяем валидность URL
+		if (!filter_var($atts['link'], FILTER_VALIDATE_URL)) {
+			return '<div class="note-block note-block--error">Ошибка: Неверный URL в шорткоде.</div>';
+		}
+		$link_url = esc_url($atts['link']); // Экранируем URL
+		$link_text = esc_html($atts['link_text']); // Экранируем текст ссылки
+		$link_html = sprintf(
+			'<a href="%s" target="_blank" rel="noopener">%s</a>',
+			$link_url,
+			$link_text
+		);
+	}
+
+	// Заменяем указанное слово (link_word) на ссылку, если задано
+	if ($link_html && !empty($atts['link_word'])) {
+		$link_word = preg_quote(esc_attr($atts['link_word']), '/'); // Экранируем для regex
+		$content = preg_replace("/\b$link_word\b/", $link_html, $content, 1);
+	} elseif ($link_html) {
+		// Если link_word не указано, заменяем "ссылка" или "ссылке"
+		$content = preg_replace('/\b(ссылке|ссылка)\b/i', $link_html, $content, 1);
+	}
+
+	// Экранируем тип заметки
+	$type = esc_attr($atts['type']);
+
+	// Возвращаем HTML
+	return '<div class="note-block note-block--' . $type . '">' . $content . '</div>';
 }
-add_shortcode('note_block', 'note_block_shortcode');
+add_shortcode('note-block', 'tgx_note_block_shortcode');
 
 // Подключаем JavaScript для копирования
 function enqueue_copy_block_script()
