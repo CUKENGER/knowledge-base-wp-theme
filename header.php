@@ -80,10 +80,10 @@
           $support_link = get_theme_mod('tgx_support_link', '');
           $site_link = get_theme_mod('tgx_site_link', '');
           ?>
-          <a href="<?php echo esc_url($support_link); ?>" class="header-btn header-btn--support" <?php echo $support_link ? '' : 'disabled'; ?>>
+          <a href="<?php echo esc_url($support_link); ?>" target='_blank' class="header-btn header-btn--support" <?php echo $support_link ? '' : 'disabled'; ?>>
             Поддержка
           </a>
-          <a href="<?php echo esc_url($site_link); ?>" class="header-btn header-btn--site" <?php echo $site_link ? '' : 'disabled'; ?>>
+          <a href="<?php echo esc_url($site_link); ?>" target='_blank' class="header-btn header-btn--site" <?php echo $site_link ? '' : 'disabled'; ?>>
             Сайт сервиса
           </a>
         </div>
@@ -96,8 +96,8 @@
               stroke-linejoin="round" />
           </svg>
           <div class="header-menu__dropdown">
-            <a href="<?php echo esc_url($support_link); ?>" class="header-menu__link" <?php echo $support_link ? '' : 'disabled'; ?>>Поддержка</a>
-            <a href="<?php echo esc_url($site_link); ?>" class="header-menu__link" <?php echo $site_link ? '' : 'disabled'; ?>>Сайт сервиса</a>
+            <a href="<?php echo esc_url($support_link); ?>" target='_blank' class="header-menu__link" <?php echo $support_link ? '' : 'disabled'; ?>>Поддержка</a>
+            <a href="<?php echo esc_url($site_link); ?>" target='_blank' class="header-menu__link" <?php echo $site_link ? '' : 'disabled'; ?>>Сайт сервиса</a>
             <div class='header-menu__divide'></div>
             <?php
             $telegram_links = [
@@ -108,7 +108,7 @@
             foreach ($telegram_links as $key => $label):
                 $link = get_option("tgx_footer_link_$key", '#');
                 ?>
-                <a href="<?php echo esc_url($link); ?>" class="header-menu__link" <?php echo $link !== '#' ? '' : 'disabled'; ?>>
+                <a href="<?php echo esc_url($link); ?>" target='_blank' class="header-menu__link" <?php echo $link !== '#' ? '' : 'disabled'; ?>>
                     <?php echo esc_html($label); ?>
                 </a>
             <?php endforeach; ?>

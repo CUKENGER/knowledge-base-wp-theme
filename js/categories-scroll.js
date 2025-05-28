@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Проверка переполнения для .suggestions
 		function checkOverflow() {
-			if (container.classList.contains('suggestions')) {
-				if (container.scrollWidth > container.clientWidth) {
-					container.classList.add('overflow')
-				} else {
-					container.classList.remove('overflow')
-				}
+			// Допуск в 2 пикселя для избежания ложных срабатываний
+			const hasOverflow = container.scrollWidth > container.clientWidth + 2
+			if (hasOverflow) {
+				container.classList.add('overflow')
+			} else {
+				container.classList.remove('overflow')
 			}
 		}
 
