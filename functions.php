@@ -40,11 +40,9 @@ function copy_block_shortcode($atts, $content = null)
 	$output = '<div class="copy-block copy-block--' . esc_attr($atts['type']) . '" id="' . esc_attr($block_id) . '">';
 	$output .= '<div class="copy-block__content">' . $display_content . '</div>';
 	$output .= '<button class="copy-button" aria-label="Копировать текст" onclick="copyBlockText(\'' . esc_attr($block_id) . '\', \'' . esc_js($copy_content) . '\')">';
-	$output .= '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">';
-	$output .= '<path d="M13.75 2.5H6.25C4.86929 2.5 3.75 3.61929 3.75 5V15C3.75 16.3807 4.86929 17.5 6.25 17.5H13.75C15.1307 17.5 16.25 16.3807 16.25 15V5C16.25 3.61929 15.1307 2.5 13.75 2.5ZM6.25 3.75H13.75C14.4404 3.75 15 4.30964 15 5V15C15 15.6904 14.4404 16.25 13.75 16.25H6.25C5.55964 16.25 5 15.6904 5 15V5C5 4.30964 5.55964 3.75 6.25 3.75Z" fill="currentColor"/>';
-	$output .= '<path d="M7.5 6.25H12.5C12.9142 6.25 13.25 6.58579 13.25 7V13.75C13.25 14.1642 12.9142 14.5 12.5 14.5H7.5C7.08579 14.5 6.75 14.1642 6.75 13.75V7C6.75 6.58579 7.08579 6.25 7.5 6.25Z" fill="currentColor"/>';
+	$output .= '<svg width="20" height="28" viewBox="0 0 20 28" fill="none" xmlns="http://www.w3.org/2000/svg">';
+	$output .= '<path d="M16.1543 4.00391C17.7394 4.08421 19 5.39489 19 7V17C19 18.6569 17.6569 20 16 20H15V21C15 22.6569 13.6569 24 12 24H4C2.34315 24 1 22.6569 1 21V11C1 9.34315 2.34315 8 4 8H5V7C5 5.34315 6.34315 4 8 4H16L16.1543 4.00391ZM4 10C3.44772 10 3 10.4477 3 11V21C3 21.5523 3.44772 22 4 22H12C12.5523 22 13 21.5523 13 21V11C13 10.4823 12.6067 10.0562 12.1025 10.0049L12 10H4ZM8 6C7.44772 6 7 6.44772 7 7V8H12L12.1543 8.00391C13.7394 8.08421 15 9.39489 15 11V18H16C16.5523 18 17 17.5523 17 17V7C17 6.48232 16.6067 6.05621 16.1025 6.00488L16 6H8Z" fill="currentColor"/>';
 	$output .= '</svg></button>';
-	$output .= '<span class="copy-block__notification" aria-live="polite">Текст скопирован</span>';
 	$output .= '</div>';
 
 	return $output;
