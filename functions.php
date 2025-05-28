@@ -1,3 +1,4 @@
+
 <?php
 // Подключение модулей
 require_once get_template_directory() . '/inc/enqueue.php';
@@ -5,7 +6,7 @@ require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/misc.php';
 
-// Поддержка миниатюр (оставляем здесь, так как это базовая настройка темы)
+// Поддержка миниатюр
 add_theme_support('post-thumbnails');
 
 // Шорткод для copy-block
@@ -50,28 +51,15 @@ function copy_block_shortcode($atts, $content = null)
 }
 add_shortcode('copy-block', 'copy_block_shortcode');
 
-// Подключаем JavaScript для копирования
-function enqueue_copy_block_script()
-{
-	wp_enqueue_script(
-		'copy-block-script',
-		get_template_directory_uri() . '/js/copy-block.js',
-		[], // Зависимости
-		filemtime(get_template_directory() . '/js/copy-block.js') ?: '1.0', // Версия
-		true // В футере
-	);
-}
-add_action('wp_enqueue_scripts', 'enqueue_copy_block_script');
-
-// Шорткод для note-block (без изменений)
+// Шорткод для note-block
 function tgx_note_block_shortcode($atts, $content = null)
 {
 	// Настраиваемые параметры
 	$atts = shortcode_atts([
-		'type' => 'info', // Тип заметки: info, warning, error
-		'link' => '', // URL ссылки
-		'link_text' => '', // Текст ссылки
-		'link_word' => '', // Слово в содержимом, которое станет ссылкой
+		'type' => 'info',
+		'link' => '',
+		'link_text' => '',
+		'link_word' => '',
 	], $atts, 'note-block');
 
 	// Проверяем, есть ли содержимое
@@ -79,7 +67,7 @@ function tgx_note_block_shortcode($atts, $content = null)
 		return '';
 	}
 
-	// Разрешаем безопасные HTML-теги в содержимом (исключая <a>)
+	// Разрешаем безопасные HTML-теги
 	$allowed_tags = [
 		'b' => [],
 		'strong' => [],
@@ -90,15 +78,14 @@ function tgx_note_block_shortcode($atts, $content = null)
 	// Экранируем содержимое
 	$content = wp_kses($content, $allowed_tags);
 
-	// Формируем ссылку, если указаны link и link_text
+	// Формируем ссылку
 	$link_html = '';
 	if (!empty($atts['link']) && !empty($atts['link_text'])) {
-		// Проверяем валидность URL
 		if (!filter_var($atts['link'], FILTER_VALIDATE_URL)) {
 			return '<div class="note-block note-block--error">Ошибка: Неверный URL в шорткоде.</div>';
 		}
-		$link_url = esc_url($atts['link']); // Экранируем URL
-		$link_text = esc_html($atts['link_text']); // Экранируем текст ссылки
+		$link_url = esc_url($atts['link']);
+		$link_text = esc_html($atts['link_text']);
 		$link_html = sprintf(
 			'<a href="%s" target="_blank" rel="noopener">%s</a>',
 			$link_url,
@@ -106,33 +93,34 @@ function tgx_note_block_shortcode($atts, $content = null)
 		);
 	}
 
-	// Заменяем указанное слово (link_word) на ссылку, если задано
+	// Заменяем указанное слово на ссылку
 	if ($link_html && !empty($atts['link_word'])) {
-		$link_word = preg_quote(esc_attr($atts['link_word']), '/'); // Экранируем для regex
+		$link_word = preg_quote(esc_attr($atts['link_word']), '/');
 		$content = preg_replace("/\b$link_word\b/", $link_html, $content, 1);
 	} elseif ($link_html) {
-		// Если link_word не указано, заменяем "ссылка" или "ссылке"
 		$content = preg_replace('/\b(ссылке|ссылка)\b/i', $link_html, $content, 1);
 	}
 
-	// Экранируем тип заметки
+	// Экранируем тип
 	$type = esc_attr($atts['type']);
 
-	// Возвращаем HTML
 	return '<div class="note-block note-block--' . $type . '">' . $content . '</div>';
 }
 add_shortcode('note-block', 'tgx_note_block_shortcode');
 
-// Подключаем JavaScript для копирования
+// Подключаем JavaScript
 function enqueue_copy_block_script()
 {
-	wp_enqueue_script(
-		'copy-block-script',
-		get_template_directory_uri() . '/js/copy-block.js',
-		array(),
-		filemtime(get_template_directory() . '/js/copy-block.js'),
-		true
-	);
+	$js_file = get_template_directory() . '/js/copy-block.js';
+	if (file_exists($js_file)) {
+		wp_enqueue_script(
+			'copy-block-script',
+			get_template_directory_uri() . '/js/copy-block.js',
+			[],
+			filemtime($js_file) ?: '1.0',
+			true
+		);
+	}
 }
 add_action('wp_enqueue_scripts', 'enqueue_copy_block_script');
 ?>
