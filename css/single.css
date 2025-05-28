@@ -101,6 +101,7 @@
 .post-content p {
 	margin: 0 0 15px;
 	font-weight: 500;
+	line-height: 160%;
 }
 
 .post-content ul,
@@ -121,7 +122,7 @@
 .post-content img {
 	max-width: 100%;
 	height: auto;
-	margin: 15px 0;
+	margin: 24px 0;
 	border-radius: 25px;
 	display: block;
 }
@@ -132,7 +133,7 @@
 }
 
 .post-content .wp-block-image {
-	margin: 15px 0;
+	margin: 24px 0;
 }
 
 .post-content .aligncenter {
@@ -162,7 +163,7 @@
 	background-color: var(--blue-back);
 	padding: 16px 24px;
 	border-radius: 4px;
-	margin: 15px 0;
+	margin: 24px 0;
 	font-size: 20px;
 	line-height: 1.4;
 	border-left: 4px solid var(--accent-blue);
@@ -174,7 +175,7 @@
 	background-color: var(--gray-back);
 	padding: 16px 24px;
 	border-radius: 4px;
-	margin: 15px 0;
+	margin: 24px 0;
 	font-size: 20px;
 	line-height: 1.4;
 	border-left: 4px solid var(--gray-light);

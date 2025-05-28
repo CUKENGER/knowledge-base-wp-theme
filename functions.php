@@ -54,6 +54,7 @@ function tgx_note_block_shortcode($atts, $content = null)
 	], $atts, 'note-block');
 
 	if (empty($content)) {
+		error_log('note-block: Пустой контент');
 		return '';
 	}
 
@@ -70,13 +71,23 @@ function tgx_note_block_shortcode($atts, $content = null)
 
 	if (!empty($atts['link']) && !empty($atts['link_text'])) {
 		if (!filter_var($atts['link'], FILTER_VALIDATE_URL)) {
+			error_log('note-block: Неверный URL: ' . $atts['link']);
 			return '<div class="note-block note-block--error">Ошибка: Неверный URL.</div>';
 		}
 		$link_url = esc_url($atts['link']);
 		$link_text = esc_html($atts['link_text']);
 		$link_html = sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', $link_url, $link_text);
 		$link_text_escaped = preg_quote($link_text, '/');
-		$content = preg_replace("/\b$link_text_escaped\b/", $link_html, $content, 1);
+		$pattern = "/\b$link_text_escaped\b/i"; // i для игнора регистра
+		$new_content = preg_replace($pattern, $link_html, $content, 1);
+		if ($new_content === $content) {
+			error_log("note-block: Не удалось заменить '$link_text' в контенте: '$content'");
+		} else {
+			$content = $new_content;
+			error_log("note-block: Успешно заменили '$link_text' на ссылку");
+		}
+	} else {
+		error_log('note-block: Отсутствует link или link_text');
 	}
 
 	$valid_types = ['info', 'warning', 'error'];
