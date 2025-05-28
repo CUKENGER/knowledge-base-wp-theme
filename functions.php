@@ -118,4 +118,42 @@ function tgx_note_block_shortcode($atts, $content = null)
 	return '<div class="note-block note-block--' . esc_attr($type) . '">' . $content . '</div>';
 }
 add_shortcode('note-block', 'tgx_note_block_shortcode');
+
+
+
+// Функция для удаления эмодзи
+function remove_emoji($string)
+{
+	// Удаляем эмодзи (Unicode-диапазоны)
+	$string = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $string); // Эмоции
+	$string = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $string); // Символы и пиктограммы
+	$string = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $string); // Транспорт и символы
+	$string = preg_replace('/[\x{1F700}-\x{1F77F}]/u', '', $string); // Дополнительные
+	$string = preg_replace('/[\x{1F780}-\x{1F7FF}]/u', '', $string); // Дополнительные
+	$string = preg_replace('/[\x{1F800}-\x{1F8FF}]/u', '', $string); // Дополнительные
+	$string = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $string); // Дополнительные
+	$string = preg_replace('/[\x{1FA00}-\x{1FA6F}]/u', '', $string); // Шахматы и др.
+	$string = preg_replace('/[\x{1FA70}-\x{1FAFF}]/u', '', $string); // Дополнительные
+	$string = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $string);  // Разное
+	$string = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $string);  // Dingbats
+	return trim($string);
+}
+
+// Удаляем эмодзи из slug (URL)
+function clean_post_slug($title)
+{
+	$title = remove_emoji($title);
+	return $title;
+}
+add_filter('sanitize_title', 'clean_post_slug', 10, 1);
+
+// Удаляем эмодзи из <title>
+function clean_document_title($title)
+{
+	if (is_singular() || is_home() || is_archive()) {
+		$title['title'] = remove_emoji($title['title']);
+	}
+	return $title;
+}
+add_filter('document_title_parts', 'clean_document_title', 10, 1);
 ?>
