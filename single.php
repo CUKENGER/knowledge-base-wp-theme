@@ -196,7 +196,6 @@ function remove_emoji($string)
 
       <!-- Вставка sidebar -->
       <?php
-      if (is_single() || is_category()):
         $current_post_id = get_queried_object_id();
         $active_category_id = is_category() ? $current_post_id : (wp_get_post_categories($current_post_id, ['fields' => 'ids'])[0] ?? 0);
         ?>
@@ -218,8 +217,8 @@ function remove_emoji($string)
             </div>
             <div class="sidebar__categories">
               <?php
-              $categories = get_transient('tgx_categories') ?: get_categories(['hide_empty' => true]);
-              if ($categories && !is_wp_error($categories)):
+              $categories = get_transient('tgx_categories') ?: get_categories(['hide_empty' => false]);
+              if ($categories):
                 set_transient('tgx_categories', $categories, HOUR_IN_SECONDS);
                 global $post;
                 $tmp_post = $post;
@@ -283,7 +282,6 @@ function remove_emoji($string)
           </section>
           <?php get_template_part('template-parts/promo-card'); ?>
         </div>
-      <?php endif; ?>
       <!-- Конец sidebar -->
     </div>
   </div>

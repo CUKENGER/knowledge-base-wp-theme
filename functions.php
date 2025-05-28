@@ -106,20 +106,4 @@ function tgx_note_block_shortcode($atts, $content = null)
 	return '<div class="note-block note-block--' . $type . '">' . $content . '</div>';
 }
 add_shortcode('note-block', 'tgx_note_block_shortcode');
-
-// Подключаем JavaScript
-function enqueue_copy_block_script()
-{
-	$js_file = get_template_directory() . '/js/copy-block.js';
-	if (file_exists($js_file)) {
-		wp_enqueue_script(
-			'copy-block-script',
-			get_template_directory_uri() . '/js/copy-block.js',
-			[],
-			filemtime($js_file) ?: '1.0',
-			true
-		);
-	}
-}
-add_action('wp_enqueue_scripts', 'enqueue_copy_block_script');
 ?>

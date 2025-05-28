@@ -2,48 +2,114 @@
 function tgx_theme_enqueue_scripts()
 {
 	// Стили
-	wp_enqueue_style('tgx-reset-styles', get_template_directory_uri() . '/css/reset.css', [], filemtime(get_template_directory() . '/css/reset.css'));
-	wp_enqueue_style('tgx-custom-styles', get_template_directory_uri() . '/css/styles.css', ['tgx-reset-styles'], filemtime(get_template_directory() . '/css/styles.css'));
-	wp_enqueue_style('tgx-header-styles', get_template_directory_uri() . '/css/header.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/header.css'));
-	wp_enqueue_style('tgx-index-styles', get_template_directory_uri() . '/css/index.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/index.css'));
+	$css_files = [
+		'tgx-reset-styles' => ['path' => '/css/reset.css', 'deps' => []],
+		'tgx-custom-styles' => ['path' => '/css/styles.css', 'deps' => ['tgx-reset-styles']],
+		'tgx-header-styles' => ['path' => '/css/header.css', 'deps' => ['tgx-custom-styles']],
+		'tgx-index-styles' => ['path' => '/css/index.css', 'deps' => ['tgx-custom-styles']],
+		'tgx-footer-styles' => ['path' => '/css/footer.css', 'deps' => ['tgx-custom-styles']],
+	];
 
-	if ((is_single() || is_category()) && file_exists(get_template_directory() . '/css/page-header.css')) {
-		wp_enqueue_style('tgx-page-header-styles', get_template_directory_uri() . '/css/page-header.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/page-header.css'));
-		wp_enqueue_style('tgx-sidebar-styles', get_template_directory_uri() . '/css/sidebar.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/sidebar.css'));
-		wp_enqueue_style('tgx-breadcrumbs-styles', get_template_directory_uri() . '/css/breadcrumbs.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/breadcrumbs.css'));
+	foreach ($css_files as $handle => $file) {
+		$file_path = get_template_directory() . $file['path'];
+		if (file_exists($file_path)) {
+			wp_enqueue_style(
+				$handle,
+				get_template_directory_uri() . $file['path'],
+				$file['deps'],
+				filemtime($file_path)
+			);
+		}
 	}
 
-	if (is_category() && file_exists(get_template_directory() . '/css/category.css')) {
-		wp_enqueue_style('tgx-category-styles', get_template_directory_uri() . '/css/category.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/category.css'));
+	if (is_single() || is_category()) {
+		$conditional_css = [
+			'tgx-page-header-styles' => '/css/page-header.css',
+			'tgx-sidebar-styles' => '/css/sidebar.css',
+			'tgx-breadcrumbs-styles' => '/css/breadcrumbs.css',
+		];
+		foreach ($conditional_css as $handle => $path) {
+			$file_path = get_template_directory() . $path;
+			if (file_exists($file_path)) {
+				wp_enqueue_style(
+					$handle,
+					get_template_directory_uri() . $path,
+					['tgx-custom-styles'],
+					filemtime($file_path)
+				);
+			}
+		}
 	}
 
-	if (is_single() && file_exists(get_template_directory() . '/css/single.css')) {
-		wp_enqueue_style('tgx-single-styles', get_template_directory_uri() . '/css/single.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/single.css'));
+	if (is_category()) {
+		$category_css = get_template_directory() . '/css/category.css';
+		if (file_exists($category_css)) {
+			wp_enqueue_style(
+				'tgx-category-styles',
+				get_template_directory_uri() . '/css/category.css',
+				['tgx-custom-styles'],
+				filemtime($category_css)
+			);
+		}
 	}
 
-	if (file_exists(get_template_directory() . '/css/footer.css')) {
-		wp_enqueue_style('tgx-footer-styles', get_template_directory_uri() . '/css/footer.css', ['tgx-custom-styles'], filemtime(get_template_directory() . '/css/footer.css'));
+	if (is_single()) {
+		$single_css = get_template_directory() . '/css/single.css';
+		if (file_exists($single_css)) {
+			wp_enqueue_style(
+				'tgx-single-styles',
+				get_template_directory_uri() . '/css/single.css',
+				['tgx-custom-styles'],
+				filemtime($single_css)
+			);
+		}
 	}
+
 	// Скрипты
-	wp_enqueue_script('tgx-search-modal', get_template_directory_uri() . '/js/search-modal.js', ['jquery'], filemtime(get_template_directory() . '/js/search-modal.js'), true);
+	$js_files = [
+		'tgx-search-modal' => ['path' => '/js/search-modal.js', 'deps' => ['jquery']],
+		'tgx-main-js' => ['path' => '/js/script.js', 'deps' => ['jquery']],
+		'tgx-categories-scroll' => ['path' => '/js/categories-scroll.js', 'deps' => []],
+		'tgx-copy-block' => ['path' => '/js/copy-block.js', 'deps' => []], // Для шорткода [copy-block]
+	];
+
+	foreach ($js_files as $handle => $file) {
+		$file_path = get_template_directory() . $file['path'];
+		if (file_exists($file_path)) {
+			wp_enqueue_script(
+				$handle,
+				get_template_directory_uri() . $file['path'],
+				$file['deps'],
+				filemtime($file_path),
+				true
+			);
+		}
+	}
+
+	// Локализация для search-modal.js
 	wp_localize_script('tgx-search-modal', 'tgxSettings', [
 		'ajaxUrl' => admin_url('admin-ajax.php')
 	]);
 
-	// Дополнительные скрипты
-	if (file_exists(get_template_directory() . '/js/script.js')) {
-		wp_enqueue_script('tgx-main-js', get_template_directory_uri() . '/js/script.js', [], filemtime(get_template_directory() . '/js/script.js'), true);
-	}
-	if (file_exists(get_template_directory() . '/js/categories-scroll.js')) {
-		wp_enqueue_script('tgx-categories-scroll', get_template_directory_uri() . '/js/categories-scroll.js', [], '1.0', true);
-	}
-	if ((is_single() || is_category()) && file_exists(get_template_directory() . '/js/sidebar-toggle.js')) {
-		wp_enqueue_script('tgx-sidebar-toggle', get_template_directory_uri() . '/js/sidebar-toggle.js', [], filemtime(get_template_directory() . '/js/sidebar-toggle.js'), true);
-		wp_enqueue_script('tgx-contents-menu-toggle', get_template_directory_uri() . '/js/contents-menu.js', [], filemtime(get_template_directory() . '/js/contents-menu.js'), true);
-		wp_enqueue_script('tgx-page-header-toggle', get_template_directory_uri() . '/js/page-header-toggle.js', [], filemtime(get_template_directory() . '/js/page-header-toggle.js'), true);
-		wp_enqueue_script('tgx-sidebar-search', get_template_directory_uri() . '/js/sidebar-search.js', [], filemtime(get_template_directory() . '/js/sidebar-search.js'), true);
-		wp_enqueue_script('tgx-page-header-search', get_template_directory_uri() . '/js/page-header-search.js', [], filemtime(get_template_directory() . '/js/page-header-search.js'), true);
+	// Скрипты для single и category
+	$conditional_js = [
+		'tgx-sidebar-toggle' => '/js/sidebar-toggle.js',
+		'tgx-contents-menu-toggle' => '/js/contents-menu.js',
+		'tgx-page-header-toggle' => '/js/page-header-toggle.js',
+		'tgx-sidebar-search' => '/js/sidebar-search.js',
+		'tgx-page-header-search' => '/js/page-header-search.js',
+	];
+	foreach ($conditional_js as $handle => $path) {
+		$file_path = get_template_directory() . $path;
+		if (file_exists($file_path)) {
+			wp_enqueue_script(
+				$handle,
+				get_template_directory_uri() . $path,
+				['jquery'],
+				filemtime($file_path),
+				true
+			);
+		}
 	}
 }
 add_action('wp_enqueue_scripts', 'tgx_theme_enqueue_scripts');
-
