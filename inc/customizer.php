@@ -367,3 +367,67 @@ function tgx_footer_settings_page_callback()
     </div>
     <?php
 }
+
+add_action('add_meta_boxes', function () {
+    add_meta_box(
+        'display_on_home',
+        'Отображать на главной',
+        function ($post) {
+            $value = get_post_meta($post->ID, 'display_on_home', true);
+            echo '<label><input type="checkbox" name="display_on_home" ' . checked($value, '1', false) . ' value="1"> Отображать на главной</label>';
+        },
+        'post',
+        'side'
+    );
+});
+
+add_action('save_post', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        return;
+    update_post_meta($post_id, 'display_on_home', isset($_POST['display_on_home']) ? '1' : '0');
+});
+
+add_action('add_meta_boxes', function () {
+    add_meta_box(
+        'parent_post',
+        'Родительская статья',
+        function ($post) {
+            $parent_id = $post->post_parent;
+            $posts = get_posts([
+                'post_type' => 'post',
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+                'exclude' => [$post->ID],
+                'orderby' => 'title',
+                'order' => 'ASC'
+            ]);
+            echo '<select name="parent_post">';
+            echo '<option value="0">Нет родителя</option>';
+            foreach ($posts as $p) {
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($p->ID),
+                    selected($parent_id, $p->ID, false),
+                    esc_html($p->post_title)
+                );
+            }
+            echo '</select>';
+        },
+        'post',
+        'side'
+    );
+});
+
+add_action('save_post', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        return;
+    if (!isset($_POST['parent_post']))
+        return;
+    $parent_id = absint($_POST['parent_post']);
+    if ($parent_id !== $post_id) {
+        wp_update_post([
+            'ID' => $post_id,
+            'post_parent' => $parent_id
+        ]);
+    }
+});

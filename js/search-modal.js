@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function performSearch(query, resultsContainer) {
+	function performSearch(query, resultsContainer, input) {
 		if (!query) {
 			resultsContainer.classList.remove('active')
 			resultsContainer.innerHTML = ''
@@ -36,6 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					data.data.forEach(item => {
 						const link = document.createElement('a')
 						link.href = item.link
+						if (!item.link) {
+							console.warn('Empty link for item:', item)
+							return
+						}
 						link.className = 'search-result-item show'
 						link.innerHTML = `
                             <span>${item.title}</span>
@@ -43,7 +47,36 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <use href="#chevron-icon"></use>
                             </svg>
                         `
-						link.addEventListener('click', () => {
+						link.addEventListener('click', e =>
+							handleClick(
+								e,
+								input,
+								resultsContainer,
+								overlay,
+								body,
+								scrollPosition
+							)
+						)
+						link.addEventListener('touchstart', e =>
+							handleClick(
+								e,
+								input,
+								resultsContainer,
+								overlay,
+								body,
+								scrollPosition
+							)
+						)
+						function handleClick(
+							e,
+							input,
+							resultsContainer,
+							overlay,
+							body,
+							scrollPosition
+						) {
+							e.preventDefault()
+							console.log('Link clicked:', link.href)
 							input.blur()
 							resultsContainer.classList.remove('active')
 							resultsContainer.innerHTML = ''
@@ -51,7 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
 							body.classList.remove('overlay-active')
 							body.style.overflow = ''
 							window.scrollTo(0, scrollPosition)
-						})
+							window.location.href = link.href
+						}
 						resultsContainer.appendChild(link)
 					})
 					resultsContainer.classList.add('active')
@@ -105,23 +139,25 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (isFocusing || now - lastClickTime < 300) {
 				return
 			}
-			const isResultsClicked = resultsContainer.contains(e.relatedTarget)
-			const isInputFocused = input === document.activeElement
-			const isWrapperClicked = wrapper.contains(e.relatedTarget)
-			if (!isResultsClicked && !isInputFocused && !isWrapperClicked) {
-				overlay.classList.remove('active')
-				body.classList.remove('overlay-active')
-				resultsContainer.classList.remove('active')
-				body.style.overflow = ''
-				window.scrollTo(0, scrollPosition)
-				setZIndex(false, wrapper, container)
-			}
+			setTimeout(() => {
+				const isResultsClicked = resultsContainer.contains(e.relatedTarget)
+				const isInputFocused = input === document.activeElement
+				const isWrapperClicked = wrapper.contains(e.relatedTarget)
+				if (!isResultsClicked && !isInputFocused && !isWrapperClicked) {
+					overlay.classList.remove('active')
+					body.classList.remove('overlay-active')
+					resultsContainer.classList.remove('active')
+					body.style.overflow = ''
+					window.scrollTo(0, scrollPosition)
+					setZIndex(false, wrapper, container)
+				}
+			}, 300)
 		})
 
 		input.addEventListener('input', () => {
 			const query = input.value.trim()
 			toggleClearButton(input, clearButton)
-			performSearch(query, resultsContainer)
+			performSearch(query, resultsContainer, input)
 		})
 
 		if (clearButton) {

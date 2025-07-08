@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template: Index
  */
@@ -26,18 +27,23 @@ get_header();
       <div class='suggestions'>
         <?php
         $has_posts = false;
+        $used_post_ids = [];
         for ($i = 1; $i <= 7; $i++):
           $post_id = get_option("tgx_suggestion_post_$i", 0);
-          if ($post_id):
-            $has_posts = true;
-            $link = esc_url(get_permalink($post_id));
-            $raw_title = get_the_title($post_id);
-            $title = esc_html(tgx_remove_emoji($raw_title)); // Очищаем эмодзи и экранируем
-            $class = "suggestions-btn suggestions-btn--$i";
-            ?>
-            <a href="<?php echo $link; ?>" class="<?php echo esc_attr($class); ?>">
-              <?php echo $title; ?>
-            </a>
+          if ($post_id && !in_array($post_id, $used_post_ids)):
+            $post = get_post($post_id);
+            if ($post && $post->post_status === 'publish'):
+              $has_posts = true;
+              $used_post_ids[] = $post_id;
+              $link = esc_url(get_permalink($post_id));
+              $raw_title = get_the_title($post_id);
+              $title = esc_html(tgx_remove_emoji($raw_title));
+              $class = "suggestions-btn suggestions-btn--$i";
+              ?>
+              <a href="<?php echo $link; ?>" class="<?php echo esc_attr($class); ?>">
+                <?php echo $title; ?>
+              </a>
+            <?php endif; ?>
           <?php endif; ?>
         <?php endfor; ?>
       </div>
@@ -47,8 +53,7 @@ get_header();
         if (false === $categories) {
           $categories = get_categories([
             'hide_empty' => false,
-            'orderby' => 'name',
-            'order' => 'ASC',
+            'orderby' => 'term_order',
           ]);
           set_transient('tgx_categories', $categories, HOUR_IN_SECONDS);
         }
@@ -59,6 +64,14 @@ get_header();
             'posts_per_page' => 7,
             'post_status' => 'publish',
             'post_type' => 'post',
+            'post_parent' => 0,
+            'meta_query' => [
+              [
+                'key' => 'display_on_home',
+                'value' => '1',
+                'compare' => '='
+              ]
+            ]
           ]);
           if ($posts_query->have_posts()):
             ?>
@@ -73,10 +86,10 @@ get_header();
                     stroke-linejoin="round" />
                 </svg>
               </a>
-              <?php while ($posts_query->have_posts()):
+              <?php
+              while ($posts_query->have_posts()):
                 $posts_query->the_post();
-                // Дебаг
-                error_log('Index Post: ID ' . get_the_ID() . ', Title: ' . get_the_title() . ', URL: ' . get_permalink());
+                error_log('Index Post: ID ' . get_the_ID() . ', Title: ' . get_the_title() . ', URL: ' . get_permalink() . ', Display on Home: ' . get_post_meta(get_the_ID(), 'display_on_home', true));
                 ?>
                 <a href="<?php the_permalink(); ?>" class='card-btn'>
                   <span><?php the_title(); ?></span>

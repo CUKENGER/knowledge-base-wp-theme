@@ -18,47 +18,104 @@ if (is_single()) {
 		// Кэшируем категории
 		$categories = get_transient('tgx_categories');
 		if (false === $categories) {
-			$categories = get_categories(['hide_empty' => true]);
+			$categories = get_categories(['hide_empty' => true, 'orderby' => 'term_order']);
 			set_transient('tgx_categories', $categories, HOUR_IN_SECONDS);
 		}
 
 		foreach ($categories as $category):
-			$post_count = $category->count;
-			$is_active = ($category->term_id == $active_category_id) ? ' is-active' : '';
-			$display = ($category->term_id == $active_category_id) ? 'flex' : 'none';
+			$is_active = $category->term_id === $active_category_id ? ' is-active' : '';
+			$is_post_list_active = $category->term_id === $active_category_id ? ' active' : '';
 			?>
 			<button class="page-header__category-title<?php echo esc_attr($is_active); ?>"
-				data-category-id="<?php echo esc_attr($category->term_id); ?>">
-				<p class="page-header__category-content">
+				data-category-id="<?php echo esc_attr($category->term_id); ?>" type="button"
+				aria-expanded="<?php echo $is_active ? 'true' : 'false'; ?>">
+				<span class="page-header__category-content">
 					<?php echo esc_html($category->name); ?>
-					<span class="page-header__category-count"><?php echo esc_html($post_count); ?></span>
-				</p>
+					<span class="page-header__category-count"><?php echo esc_html($category->count); ?></span>
+				</span>
 				<svg class="page-header__category-arrow" width="16" height="8" viewBox="0 0 16 8" fill="none"
-					xmlns="http://www.w3.org/2000/svg">
+					xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 					<path d="M3 2L8 6L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</button>
-			<div class="page-header__post-list" data-category-id="<?php echo esc_attr($category->term_id); ?>"
-				style="display: <?php echo esc_attr($display); ?>;">
+			<div class="page-header__post-list<?php echo esc_attr($is_post_list_active); ?>"
+				data-category-id="<?php echo esc_attr($category->term_id); ?>">
 				<?php
 				$posts = get_posts([
 					'category' => $category->term_id,
 					'numberposts' => 10,
+					'post_status' => 'publish',
+					'post_parent' => 0,
 				]);
-				foreach ($posts as $post):
-					$is_post_active = ($post->ID == $current_post_id) ? ' active' : '';
-					error_log('Page Header Post: ID ' . $post->ID . ', Title: ' . get_the_title($post->ID) . ', URL: ' . get_permalink($post->ID));
-					?>
-					<a href="<?php echo esc_url(get_permalink($post->ID)); ?>"
-						class="page-header__post-item<?php echo esc_attr($is_post_active); ?>">
-						<?php echo esc_html(get_the_title($post->ID)); ?>
-						<svg class="page-header__post-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
-							<use href="#chevron-icon"></use>
-						</svg>
-					</a>
-				<?php endforeach; ?>
+
+				if (empty($posts)) {
+					echo '<p class="page-header__no-posts">Нет постов в этой категории.</p>';
+				} else {
+					global $post;
+					$tmp_post = $post;
+					foreach ($posts as $post):
+						setup_postdata($post);
+						$is_post_active = is_single() && $post->ID === $current_post_id ? ' active' : '';
+						$current_post = is_single() ? get_post($current_post_id) : null;
+						$parent_id = $current_post ? $current_post->post_parent : 0;
+						$is_parent_of_current = is_single() && $parent_id === $post->ID ? ' is-active' : '';
+						?>
+						<div class="page-header__post-wrapper">
+							<?php
+							$child_posts = get_posts([
+								'post_parent' => $post->ID,
+								'numberposts' => -1,
+								'post_status' => 'publish',
+								'post_type' => 'post',
+							]);
+							$has_children = !empty($child_posts);
+							$is_child_list_active = is_single() && ($post->ID === $current_post_id || $parent_id === $post->ID) ? ' active' : '';
+							?>
+							<button
+								class="page-header__post-item <?php echo esc_attr($is_post_active . ' ' . ($has_children && ($is_child_list_active || $is_parent_of_current) ? 'is-active' : '')); ?>"
+								data-post-id="<?php echo esc_attr($post->ID); ?>" type="button"
+								aria-expanded="<?php echo $has_children && ($is_child_list_active || $is_parent_of_current) ? 'true' : 'false'; ?>">
+								<span>
+									<a href="<?php echo esc_url(get_permalink($post->ID)); ?>" class="page-header__post-link">
+										<?php echo esc_html(get_the_title($post->ID)); ?>
+									</a>
+								</span>
+								<?php if ($has_children): ?>
+									<svg class="page-header__post-arrow" width="16" height="8" viewBox="0 0 16 8" fill="none"
+										xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+										<path d="M3 2L8 6L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+											stroke-linejoin="round" />
+									</svg>
+								<?php else: ?>
+									<svg class="page-header__post-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
+										<use href="#chevron-icon"></use>
+									</svg>
+								<?php endif; ?>
+							</button>
+							<?php if ($has_children): ?>
+								<div class="page-header__child-list <?php echo esc_attr($is_child_list_active); ?>"
+									data-post-id="<?php echo esc_attr($post->ID); ?>">
+									<?php
+									foreach ($child_posts as $child_post):
+										$is_child_active = is_single() && $child_post->ID === $current_post_id ? ' active' : '';
+										?>
+										<a href="<?php echo esc_url(get_permalink($child_post->ID)); ?>"
+											class="page-header__child-item<?php echo esc_attr($is_child_active); ?>">
+											<span><?php echo esc_html(get_the_title($child_post->ID)); ?></span>
+											<svg class="page-header__child-icon" width="8" height="16" viewBox="0 0 8 16" aria-hidden="true">
+												<use href="#chevron-icon"></use>
+											</svg>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							<?php endif; ?>
+						</div>
+					<?php endforeach;
+					wp_reset_postdata();
+					setup_postdata($tmp_post);
+				}
+				?>
 			</div>
-			<?php wp_reset_postdata(); // Восстанавливаем глобальный $post ?>
 		<?php endforeach; ?>
 	</div>
 	<div class='contents-menu__btn-container'>
@@ -95,3 +152,6 @@ if (is_single()) {
 		</symbol>
 	</defs>
 </svg>
+<script>
+	window.currentPostId = <?php echo json_encode($current_post_id); ?>;
+</script>

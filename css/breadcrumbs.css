@@ -11,6 +11,10 @@
 
 .common-breadcrumbs span {
 	white-space: nowrap;
+	max-width: 350px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex-shrink: 0;
 }
 
 .common-breadcrumbs-link {

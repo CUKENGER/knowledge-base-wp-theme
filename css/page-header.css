@@ -160,10 +160,17 @@
 	gap: 4px;
 	opacity: 0;
 	max-height: 0;
-	/* Исправлено для анимации */
 	overflow: hidden;
 	transform: translateY(-10px);
 	transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.page-header__post-list.active {
+	display: flex;
+	opacity: 1;
+	max-height: 1000px;
+	transform: translateY(0);
+	overflow: visible;
 }
 
 .page-header__post-list[style*="display: flex"] {
@@ -401,6 +408,86 @@
 
 .contents-menu__btn:hover {
 	background-color: var(--gray-back);
+}
+
+.page-header__post-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+.page-header__child-list {
+	flex-direction: column;
+	gap: 4px;
+	opacity: 0;
+	max-height: 0;
+	overflow: hidden;
+	transform: translateY(-10px);
+	transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, transform 0.3s ease-in-out;
+	padding-left: 10px;
+	margin-top: 5px;
+}
+
+.page-header__child-list.active {
+	opacity: 1;
+	max-height: 1000px;
+	display: flex;
+	transform: translateY(0);
+}
+
+.page-header__child-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 20px;
+	border-radius: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--gray-dark);
+	text-decoration: none;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.page-header__child-item:hover {
+	background-color: var(--gray-back);
+}
+
+.page-header__child-item.active {
+	background-color: var(--gray-back);
+}
+
+.page-header__child-icon {
+	width: 8px;
+	height: 16px;
+	opacity: 0;
+	flex-shrink: 0;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.page-header__child-item:hover .page-header__child-icon {
+	opacity: 1;
+	transform: translateX(2px);
+}
+
+.page-header__post-item span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: 5px;
+}
+
+.page-header__post-arrow {
+	width: 16px;
+	height: 8px;
+	transition: transform 0.3s ease-in-out;
+}
+
+.page-header__post-item.is-active .page-header__post-arrow {
+	transform: rotate(180deg);
 }
 
 /* Медиа-запросы */

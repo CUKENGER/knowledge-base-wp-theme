@@ -1,12 +1,9 @@
-/**
- * Sidebar category toggle functionality.
- * Handles opening/closing of post lists in the sidebar with smooth animation.
- */
 document.addEventListener('DOMContentLoaded', () => {
 	const buttons = document.querySelectorAll('.sidebar__category-title')
+	const postButtons = document.querySelectorAll('.sidebar__post-item')
 
 	if (!buttons.length) {
-		console.warn('No sidebar category buttons found.')
+		console.warn('Список кнопок категорий пуст.')
 		return
 	}
 
@@ -19,11 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			const isActive = button.classList.contains('is-active')
 
 			if (!postList) {
-				console.error(`Post list for category ID ${categoryId} not found.`)
+				console.error(`Список постов для категории ${categoryId} не найден.`)
 				return
 			}
 
-			// Close all lists and remove active states
 			document.querySelectorAll('.sidebar__category-title').forEach(btn => {
 				btn.classList.remove('is-active')
 				btn.setAttribute('aria-expanded', 'false')
@@ -32,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				list.classList.remove('active')
 			})
 
-			// Open current list if it was not active
 			if (!isActive) {
 				button.classList.add('is-active')
 				button.setAttribute('aria-expanded', 'true')
@@ -40,4 +35,97 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 	})
+
+	postButtons.forEach(button => {
+		button.addEventListener('click', e => {
+			e.preventDefault()
+			const link = button.querySelector('.sidebar__post-link')
+			const href = link.getAttribute('href')
+			const postId = button.dataset.postId
+			const childList = document.querySelector(
+				`.sidebar__child-list[data-post-id="${postId}"]`
+			)
+
+			console.log('Клик по посту:', {
+				postId,
+				hasChildList: !!childList,
+				buttonIsActive: button.classList.contains('is-active'),
+				childListIsActive: childList
+					? childList.classList.contains('active')
+					: null,
+			})
+
+			// Если есть дочерние посты и текущая страница — это родительский пост
+			if (childList && postId === String(window.currentPostId)) {
+				const isActive = childList.classList.contains('active')
+
+				document.querySelectorAll('.sidebar__post-item').forEach(btn => {
+					btn.classList.remove('is-active')
+					btn.setAttribute('aria-expanded', 'false')
+				})
+				document.querySelectorAll('.sidebar__child-list').forEach(list => {
+					list.classList.remove('active')
+				})
+
+				if (!isActive) {
+					button.classList.add('is-active')
+					button.setAttribute('aria-expanded', 'true')
+					childList.classList.add('active')
+					console.log('Список дочерних открыт:', {
+						postId,
+						ariaExpanded: button.getAttribute('aria-expanded'),
+					})
+				} else {
+					button.classList.remove('is-active')
+					button.setAttribute('aria-expanded', 'false')
+					childList.classList.remove('active')
+					console.log('Список дочерних закрыт:', {
+						postId,
+						ariaExpanded: button.getAttribute('aria-expanded'),
+					})
+				}
+				return
+			}
+
+			// Переход на страницу поста
+			if (href !== window.location.href) {
+				const parentId = button.dataset.postId
+				window.location.href = href + '?open_parent=' + parentId
+			}
+		})
+	})
+
+	const childButtons = document.querySelectorAll('.sidebar__child-item')
+	childButtons.forEach(button => {
+		button.addEventListener('click', e => {
+			e.preventDefault()
+			const href = button.getAttribute('href')
+			const postId = href.split('/').filter(Boolean).pop()
+
+			if (
+				postId === String(window.currentPostId) ||
+				href === window.location.href
+			) {
+				return
+			}
+
+			window.location.href = href
+		})
+	})
+
+	const urlParams = new URLSearchParams(window.location.search)
+	const openParentId = urlParams.get('open_parent')
+	if (openParentId) {
+		const parentButton = document.querySelector(
+			`.sidebar__post-item[data-post-id="${openParentId}"]`
+		)
+		const childList = document.querySelector(
+			`.sidebar__child-list[data-post-id="${openParentId}"]`
+		)
+		if (parentButton && childList) {
+			parentButton.classList.add('is-active')
+			parentButton.setAttribute('aria-expanded', 'true')
+			childList.classList.add('active')
+		}
+	}
 })

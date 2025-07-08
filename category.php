@@ -27,6 +27,7 @@ get_header();
 							'cat' => $cat_id,
 							'posts_per_page' => 10,
 							'post_type' => 'post',
+							'post_parent' => 0,
 							'post_status' => 'publish',
 						);
 						$query = new WP_Query($args);

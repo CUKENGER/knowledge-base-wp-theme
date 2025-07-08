@@ -27,6 +27,15 @@
 			echo '<span>Без категории</span>';
 			echo '<span class="common-breadcrumbs-divider">/</span>';
 		}
+		$current_post = get_post(get_queried_object_id());
+		$parent_id = $current_post->post_parent;
+		if ($parent_id) {
+			$parent_post = get_post($parent_id);
+			if ($parent_post) {
+				echo '<a href="' . esc_url(get_permalink($parent_id)) . '" class="common-breadcrumbs-link">' . esc_html($parent_post->post_title) . '</a>';
+				echo '<span class="common-breadcrumbs-divider">/</span>';
+			}
+		}
 		echo '<span>' . esc_html(get_the_title()) . '</span>';
 	} else {
 		echo '<span>' . esc_html(get_the_title()) . '</span>';
