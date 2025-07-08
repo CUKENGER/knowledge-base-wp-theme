@@ -23,6 +23,14 @@ if (is_single()) {
 		}
 
 		foreach ($categories as $category):
+			$parent_posts_count = count(get_posts([
+				'category' => $category->term_id,
+				'post_status' => 'publish',
+				'post_type' => 'post',
+				'post_parent' => 0,
+				'numberposts' => -1,
+				'fields' => 'ids', // Только ID для оптимизации
+			]));
 			$is_active = $category->term_id === $active_category_id ? ' is-active' : '';
 			$is_post_list_active = $category->term_id === $active_category_id ? ' active' : '';
 			?>
@@ -31,7 +39,7 @@ if (is_single()) {
 				aria-expanded="<?php echo $is_active ? 'true' : 'false'; ?>">
 				<span class="page-header__category-content">
 					<?php echo esc_html($category->name); ?>
-					<span class="page-header__category-count"><?php echo esc_html($category->count); ?></span>
+					<span class="page-header__category-count"><?php echo esc_html($parent_posts_count); ?></span>
 				</span>
 				<svg class="page-header__category-arrow" width="16" height="8" viewBox="0 0 16 8" fill="none"
 					xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

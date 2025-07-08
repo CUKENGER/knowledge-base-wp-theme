@@ -59,6 +59,16 @@ get_header();
         }
 
         foreach ($categories as $category):
+
+          $parent_posts_count = count(get_posts([
+            'cat' => $category->term_id,
+            'post_status' => 'publish',
+            'post_type' => 'post',
+            'post_parent' => 0,
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+          ]));
+          
           $posts_query = new WP_Query([
             'cat' => $category->term_id,
             'posts_per_page' => 7,
@@ -79,7 +89,7 @@ get_header();
               <a href="<?php echo esc_url(get_category_link($category->term_id)); ?>" class='category-widget__title'>
                 <p class='category-widget__content--title'>
                   <?php echo esc_html($category->name); ?>
-                  <span class='category-widget__count--title'><?php echo esc_html($category->count); ?></span>
+                  <span class='category-widget__count--title'><?php echo esc_html($parent_posts_count); ?></span>
                 </p>
                 <svg width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M2 3L6 8L2 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
